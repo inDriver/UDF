@@ -1,0 +1,11 @@
+framework module UDF {
+  umbrella header "UDF.h"
+
+  export *
+  module * { export * }
+}
+
+module UDF.Swift {
+    header "UDF-Swift.h"
+    requires objc
+}
