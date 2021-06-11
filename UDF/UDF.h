@@ -15,5 +15,3 @@ FOUNDATION_EXPORT double UDFVersionNumber;
 FOUNDATION_EXPORT const unsigned char UDFVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <UDF/PublicHeader.h>
-
-
