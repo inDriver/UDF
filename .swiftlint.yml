@@ -1,0 +1,23 @@
+disabled_rules:
+  - todo
+excluded:
+  - Pods
+  - Carthage
+  - Modules
+identifier_name:
+  excluded:
+    - id
+    - vc
+    - to
+    - di
+    - up
+    - by
+    - x
+    - y
+type_name:
+  excluded:
+    - ID
+nesting:
+  type_level: 3
+cyclomatic_complexity:
+  error: 100
