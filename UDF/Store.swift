@@ -182,6 +182,8 @@ public class Store<State>: ActionDispatcher {
 
 // MARK: - ProxyStore
 
+/// ProxyStore is a specific type of `Store`.
+/// It doesn't have its own reducer. ProxyStore just proxy actions to parent store and get `State` update from it.
 class ProxyStore<LocalState, State>: Store<LocalState> {
     private let store: Store<State>
     private let transform: (State) -> LocalState

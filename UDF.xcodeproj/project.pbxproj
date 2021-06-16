@@ -59,7 +59,7 @@
 		7D64D98A2673394900DF75E9 /* Action.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Action.swift; sourceTree = "<group>"; };
 		7D64D98B2673394900DF75E9 /* Reducer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reducer.swift; sourceTree = "<group>"; };
 		7D64D98C2673394900DF75E9 /* Subscription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Subscription.swift; sourceTree = "<group>"; };
-		7D64D98D2673394900DF75E9 /* Store.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
+		7D64D98D2673394900DF75E9 /* Store.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		7D64D9A22673397600DF75E9 /* StoreConnectableTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoreConnectableTests.swift; sourceTree = "<group>"; };
 		7D64D9A42673397700DF75E9 /* StoreDoubleScopeTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoreDoubleScopeTests.swift; sourceTree = "<group>"; };
 		7D64D9A52673397700DF75E9 /* CoreBasicTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreBasicTests.swift; sourceTree = "<group>"; };
