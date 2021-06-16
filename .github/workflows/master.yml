@@ -30,4 +30,4 @@ jobs:
       - name: Build
         run: xcodebuild -project UDF.xcodeproj
       - name: Test
-        run: xcodebuild test -project UDF.xcodeproj -scheme UDF -destination 'platform=iOS Simulator,name=iPhone X,OS=12.4'
+        run: xcodebuild test -project UDF.xcodeproj -scheme UDF -destination 'platform=iOS Simulator,name=iPhone 11,OS=14.2'
