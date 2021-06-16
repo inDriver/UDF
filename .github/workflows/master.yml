@@ -1,0 +1,33 @@
+name: master
+on:
+  # Trigger the workflow on push,
+  push:
+    branches:
+      - 'develop'
+      - 'master'
+  # Триггер – пул реквесты *В* бранчи
+  # т.е. базовой веткой pr'а должна быть одна из перечисленных
+  pull_request:
+    types: [ opened, synchronize ]
+    # фичи могут мерджится в эти ветки
+    branches:
+      - 'feature/**'
+      - 'develop'
+  # Trigger manually
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: develop build
+    runs-on: [self-hosted, xcode12]
+    timeout-minutes: 90
+    env:
+      LC_ALL: en_US.UTF-8
+      LANG: en_US.UTF-8
+      LANGUAGE: en_US.UTF-8
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build
+        run: xcodebuild -project UDF.xcodeproj
+      - name: Test
+        run: xcodebuild test -project UDF.xcodeproj -scheme UDF -destination 'platform=iOS Simulator,name=iPhone X,OS=12.4'
