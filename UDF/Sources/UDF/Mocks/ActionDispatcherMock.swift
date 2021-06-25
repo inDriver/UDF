@@ -1,6 +1,5 @@
 //  Created by rturov on 15.02.2021.
 
-/// Mock implementation for  `ActionDispatcher` protocol.
 public final class ActionDispatcherMock: ActionDispatcher {
     public private(set) var dispatchedActions = [Action]()
 
