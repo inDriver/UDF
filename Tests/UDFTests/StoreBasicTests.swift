@@ -25,69 +25,76 @@ import XCTest
 
 @testable import UDF
 
-class UDFTests: XCTestCase {
+class StoreBasicTests: XCTestCase {
+
     let disposer = Disposer()
-    struct FakeAction: Action { }
 
     // MARK: Components
 
-    func testComponentSubscribedAndRecevesCurrentState() {
+    func testComponentSubscribedAndReceivesCurrentState() {
+        // given
         let exp = expectation(description: "state is right")
         let state = 7
-        let sut = Store<Int>(state: state) { _, _ in }
+        let sut = Store(state: state) { _, _ in }
+
+        // when
         sut.observe { value in
             if value == state { exp.fulfill() }
         }.dispose(on: disposer)
+
+        // then
         wait(for: [exp], timeout: 0.1)
     }
 
     func testComponentSubscribed_StateHasChanged_ComponentRecevesAllStateChanges() {
-        let expectedStateSequence = [7, 2]
-
-        var sequence = Array(expectedStateSequence.reversed())
-
+        // given
+        let exp = expectation(description: "state is right")
+        let expectedStateSequence = [1, 2]
         func reduce(_ state: inout Int, _: Action) {
-            state = sequence.popLast()!
+            state = 2
         }
+        var result = [Int]()
+        let sut = Store(state: 1, reducer: reduce)
 
-        let result: AtomicValue<[Int]> = AtomicValue([])
-
-        let sut = Store<Int>(state: sequence.popLast()!, reducer: reduce)
-
+        // when
         sut.observe { value in
-            result.value.append(value)
-            if !sequence.isEmpty { sut.dispatch(FakeAction()) } else {
-                XCTAssertEqual(result.value, expectedStateSequence)
+            result.append(value)
+            if result.count != expectedStateSequence.count {
+                sut.dispatch(FakeAction())
+            } else if result == expectedStateSequence {
+                exp.fulfill()
             }
         }.dispose(on: disposer)
+
+        // then
+        wait(for: [exp], timeout: 0.5)
     }
 
-    // MARK: Middleware
+    func testMiddlewareSubscribedAndDontReceiveCurrentState() {
+        // given
+        let sut = Store(state: 7) { _, _ in }
 
-    func testMiddlewareSubscribedAndDontReceveCurrentState() {
-        let state = 7
-        let sut = Store<Int>(state: state) { _, _ in }
+        //when
         sut.onAction { _, _ in
             XCTFail("Received state on action")
         }.dispose(on: disposer)
     }
 
-    func testMiddlewareSubscribed_StateHasChanged_MiddlewareRecevesStateBeforeChangesAndAction() {
-        let firstValue = 7
+    func testMiddlewareSubscribed_StateHasChanged_MiddlewareReceivesStateAfterChangesAndAction() {
+        // given
+        let firstValue = 1
         let secondValue = 2
-        let expectedStateSequence = [firstValue, secondValue]
         let exp = expectation(description: "action and state is right")
 
-        var sequence = Array(expectedStateSequence.reversed())
-
         func reduce(_ state: inout Int, _: Action) {
-            state = sequence.popLast()!
+            state = secondValue
         }
 
-        let sut = Store<Int>(state: sequence.popLast()!, reducer: reduce)
+        let sut = Store(state: firstValue, reducer: reduce)
 
+        // when
         sut.onAction { value, action in
-            if value == firstValue, action is FakeAction {
+            if value == secondValue, action is FakeAction {
                 exp.fulfill()
             } else {
                 XCTFail("Wrong value or action type")
@@ -97,6 +104,7 @@ class UDFTests: XCTestCase {
 
         sut.dispatch(FakeAction())
 
+        // then
         wait(for: [exp], timeout: 0.5)
     }
 }

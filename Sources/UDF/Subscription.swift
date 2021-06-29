@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// Subscription  class incapsulates observer closures for `Store`.
 class Subscription<T> {
     let action: (T) -> Void
 
@@ -20,7 +21,6 @@ class Subscription<T> {
 }
 
 /// Allows Subscription to be compared and stored in sets and dicts.
-/// Uses `ObjectIdentifier` to distinguish between Commands
 extension Subscription: Hashable, Equatable {
     static func == (left: Subscription, right: Subscription) -> Bool {
         return ObjectIdentifier(left) == ObjectIdentifier(right)
@@ -34,6 +34,11 @@ extension Subscription: Hashable, Equatable {
 // MARK: - Queueing
 
 extension Subscription {
+    // Moves subscription notification to other `DispatchQueue`.
+    ///
+    /// - Parameter queue: Desired `DispatchQueue`.
+    ///
+    /// - Returns: A `Subscription` that notifies on passed DispatchQueue`.
     func async(on queue: DispatchQueue) -> Subscription {
         return Subscription { value in
             queue.async {

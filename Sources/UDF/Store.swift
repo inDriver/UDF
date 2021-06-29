@@ -21,8 +21,7 @@ public class Store<State>: ActionDispatcher {
 
     fileprivate let disposer = Disposer()
     fileprivate let storeDispatchQueue: DispatchQueue
-    fileprivate var beforeActionsObservers: Set<Subscription<(State, Action)>> = []
-    fileprivate var afterActionsObservers: Set<Subscription<(State, Action)>> = []
+    fileprivate var actionsObservers: Set<Subscription<(State, Action)>> = []
     fileprivate var stateObservers: Set<Subscription<State>> = []
 
     private let reducer: Reducer<State>
@@ -51,9 +50,8 @@ public class Store<State>: ActionDispatcher {
 
     /// Sync version of the `dispatch` method.
     fileprivate func dispatchSync(_ action: Action) {
-        beforeActionsObservers.forEach { $0.notify(with: (self.state, action)) }
         reducer(&state, action)
-        afterActionsObservers.forEach { $0.notify(with: (self.state, action)) }
+        actionsObservers.forEach { $0.notify(with: (self.state, action)) }
         stateObservers.forEach { $0.notify(with: self.state) }
     }
 
@@ -93,49 +91,29 @@ public class Store<State>: ActionDispatcher {
     ///     print(action)
     /// }
     /// ```
-    /// - Parameter observe: this closure will be executed whenever the action happened **before** the state change
-    ///
-    /// - Returns: A `Disposable`, to stop observation call .dispose() on it, or add it to a `Disposer`
-    public func onAction(execute observe: @escaping (State, Action) -> Void) -> Disposable {
-        let observeCommand = Subscription(action: observe)
-
-        storeDispatchQueue.async {
-            self.beforeActionsObservers.insert(observeCommand)
-        }
-
-        let stopObservation = Disposable(
-            id: "remove the Actions observe: \(String(describing: observe)) from observers list",
-            action: { [weak observeCommand] in
-                guard let command = observeCommand else { return }
-                self.beforeActionsObservers.remove(command)
-            }
-        )
-
-        return stopObservation.async(on: storeDispatchQueue)
-    }
-
-    /// Subscribes to observe Actions and the new State **after** the change when action has happened.
-    /// Recommended using only for analytical purposes.
-    /// ```
-    /// store.onAfterAction{ action, state in
-    ///     print(action)
-    /// }
-    /// ```
     /// - Parameter observe: this closure will be executed whenever the action happened **after** the state change
     ///
     /// - Returns: A `Disposable`, to stop observation call .dispose() on it, or add it to a `Disposer`
-    public func onAfterAction(execute observe: @escaping (State, Action) -> Void) -> Disposable {
-        let observeCommand = Subscription(action: observe)
+    public func onAction(
+        on queue: DispatchQueue? = nil,
+        with observer: @escaping (State, Action) -> Void) -> Disposable {
+
+        var subscription: Subscription<(State, Action)>
+        if let queue = queue {
+            subscription = Subscription(action: observer).async(on: queue)
+        } else {
+            subscription = Subscription(action: observer)
+        }
 
         storeDispatchQueue.async {
-            self.afterActionsObservers.insert(observeCommand)
+            self.actionsObservers.insert(subscription)
         }
 
         let stopObservation = Disposable(
             id: "remove the Actions observe: \(String(describing: observe)) from observers list",
-            action: { [weak observeCommand] in
-                guard let command = observeCommand else { return }
-                self.afterActionsObservers.remove(command)
+            action: { [weak subscription] in
+                guard let subscription = subscription else { return }
+                self.actionsObservers.remove(subscription)
             }
         )
 
@@ -182,6 +160,8 @@ public class Store<State>: ActionDispatcher {
 
 // MARK: - ProxyStore
 
+/// ProxyStore is a specific type of `Store`.
+/// It doesn't have its own reducer. ProxyStore just proxy actions to parent store and get `State` update from it.
 class ProxyStore<LocalState, State>: Store<LocalState> {
     private let store: Store<State>
     private let transform: (State) -> LocalState
@@ -200,13 +180,7 @@ class ProxyStore<LocalState, State>: Store<LocalState> {
 
         store.onAction { [weak self] _, action in
             guard let self = self else { return }
-            self.beforeActionsObservers.forEach { $0.notify(with: (self.state, action)) }
-        }.dispose(on: disposer)
-
-        store.onAfterAction { [weak self] state, action in
-            guard let self = self else { return }
-            let newState = transform(state)
-            self.afterActionsObservers.forEach { $0.notify(with: (newState, action)) }
+            self.actionsObservers.forEach { $0.notify(with: (self.state, action)) }
         }.dispose(on: disposer)
 
         store.observe { [weak self] state in

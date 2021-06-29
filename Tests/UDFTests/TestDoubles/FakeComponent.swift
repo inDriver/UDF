@@ -7,7 +7,8 @@
 
 import UDF
 
-class TestComponent: StoreConnectable {
+class FakeComponent: ViewComponent {
+
     typealias Props = Int
 
     var propsHistory = [Int]()
@@ -15,15 +16,18 @@ class TestComponent: StoreConnectable {
     var props = 0 {
         didSet {
             propsHistory.append(props)
+            propsDidSet(propsHistory)
         }
     }
 
     var disposer = Disposer()
 
     let onDeinit: () -> Void
+    let propsDidSet: ([Int]) -> Void
 
-    init(onDeinit: @escaping () -> Void = { }) {
+    init(onDeinit: @escaping () -> Void = { }, propsDidSet: @escaping ([Int]) -> Void = { _ in }) {
         self.onDeinit = onDeinit
+        self.propsDidSet = propsDidSet
     }
 
     deinit {

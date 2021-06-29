@@ -54,8 +54,6 @@ class DisposerTests: XCTestCase {
         wait(for: [exp1, exp2], timeout: 3)
     }
 
-    // MARK: Syntax sugar
-
     func testPlainCommand_DisposeOn_shouldCallDisposalsWhenDisposerDeinits() {
         let exp = expectation(description: "Disposer must execute command when deinits")
         var disposer: Disposer? = Disposer()

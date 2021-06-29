@@ -7,6 +7,8 @@
 
 import Foundation
 
+/// Use this protocol to abstract `Action` dispatching.
+/// User `ActionDispatcherMock` for tests.
 public protocol ActionDispatcher {
     func dispatch(_ action: Action)
 }
