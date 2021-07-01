@@ -25,14 +25,122 @@ Differences from others popular UDF implementations:
 [ReSwift](https://github.com/ReSwift/ReSwift) - no instruments for modularization
 
  ## Basic Usage
+ Let's imagine a simple counter app. It shows a counter label and two buttons "+" and "-" to increment and dicrement the counter. Let's consider the stages of its creation.
+ ### Building Domain
+Firstly we need to declare a state of the app:
  
+ ```swift
+struct AppState: Equatable {
+    var counter = 0
+}
+```
+**State** is all the data of an app. In our case it's just an int counter.
+Next we need to know when buttons are tapped:
+
+ ```swift
+enum CounterAction: Action {
+  case decrementButtonTapped
+  case incrementButtonTapped
+}
+```
+We use an enum and `Action` protocol for that. **Action** describes all of the actions that can occur in your app.
+Next we need to update our state accouring to an action:
+
+ ```swift
+func counterReducer(state: inout AppState, action: Action) {
+    guard let action = action as? CounterAction else { return }
+
+    switch action {
+    case .decrementButtonTapped:
+        state.counter -= 1
+    case .incrementButtonTapped:
+        state.counter += 1
+    }
+}
+```
+**Reducer** is a pure function that updates a state.
+Now we need to glue it together:
+
+ ```swift
+let store = Store<AppState>(state: .init(), reducer: counterReducer)
+```
+**Store** combine all above things together. 
+
+### View Component
+
+Let's take a look at UI now:
+ ```swift
+class CounterViewController: UIViewController, ViewComponent {
+
+   typealias Props = Int
+
+    @IBOutlet var counterLabel: UILabel!
+
+    var props: Int = 0 {
+        didSet {
+            guard isViewLoaded else { return }
+            counterLabel.text = "\(props)"
+        }
+    }
+    
+    @IBAction func decreaseButtonTapped(_ sender: UIButton) {
+        store.dispatch(CounterAction.decrementButtonTapped)
+    }
+
+    @IBAction func increaseButtonTapped(_ sender: UIButton) {
+        store.dispatch(CounterAction.incrementButtonTapped)
+    }
+}
+```
+`CounterViewController` implements `ViewComponent` protocol. It guarantees that a component receive new state only if it was changes and always in main thread. In `CounterViewController` we declare props property and update UI in it's didSet. Now we have to connect out ViewController to the store:
+
+ ```swift
+ let counterViewControler = CounterViewController()
+ counterViewControler.connect(to: store, state: \.counter)
+  ```
+ Notice that we can choose with part of the state we want to observe.
+  
+ ### Modularisation 
  
+Imagine that you would like to reuse your `CounterViewController` in other app. Or you have much bigger reusable feature with many View Controllers. In this case your AppState will look like this: 
+ 
+  ```swift
+struct AppState: Equatable {
+    var counter = 0
+    var bigFeature = BigFeature()
+}
+```
+Obviously you don't want that your features will know about AppState. You can easily decouple them by scope:
+
+ ```swift
+ let store = Store<AppState>(state: .init(), reducer: counterReducer)
+ 
+ connectCounter(to: store.scope(\.counter))
+ connectBigFeature(to: store.scope(\.bigFeature))
+ 
+ ...
+ 
+ //Somewhere in Counter.framework
+ func connectCounter(to store: Store<Int>) {
+   ...
+   counterViewController.connect(to: store)
+ }
+ 
+ //Somewhere in BigFeature.framework
+ func connectCounter(to store: Store<BigFeature>) {
+  ...
+  firstViewController.connect(to: store, state: \.first)
+ }
+ 
+```
+Now you can move your features to separate frameworks and use wherever you want.
  
  ## Installation
  
 You can add the UDF to an Xcode project by adding it as a package dependency.
 
-1. File › Swift Packages › Add Package Dependency…
+1. Open File › Swift Packages › Add Package Dependency…
 2. Enter "https://github.com/inDriver/UDF"
+3. Choose the last version
  
  ## Inspiration & Acknowledgments
