@@ -13,16 +13,26 @@ A unidirectional data flow is a design pattern where state (data) flows down and
  Here is main advantages of this UDF implementation:
  * **Testable**. All domain logic implements in pure functions, so it's easy to unit test it. All UI depends only on provided data, so it's easy to configure and cover by snapshot tests.
  * **Scalable and Reusable**. Low Coupling and High Cohesion are ones of the basic principles of good software design. UDF implements such principles in practice. It allows to decouple UI and Domain, create reusable features and scale business logic in a convenient way. 
- * **Easy working with concurrency**. The UDF obviously doesn't solve all potential concurrent problems. But it alleviates working with concurrency in regular cases. State updating always runs on separate serial queue. It garantees consistency of a state after any changes. For UI or an async task you can use ViewCmponent or ServiceComponent protocols respectively. They will subscribe your components on main or background thread so you can concentrate on business task rather than concurrency. 
- * **Free of FRP frameworks**. We decided not to use functional reactive frameworks in our library. Instead we provided it with convinient way for subscribing to state updates, so in most cases you don't even need to know how it works. Absence of FRP frameworks also means that you 
+ * **Easy working with concurrency**. The UDF obviously doesn't solve all potential concurrent problems. But it alleviates working with concurrency in regular cases. State updating always runs on separate serial queue. It garantees consistency of a state after any changes. For UI or an async task you can use ViewComponent or ServiceComponent protocols respectively. They will subscribe your components on main or background thread so you can concentrate on business task rather than concurrency. 
+ * **Free of FRP frameworks**. We decided not to use functional reactive frameworks in our library. Instead we provided it with convinient way for subscribing to state updates, so in most cases you don't even need to know how it works. Absence of FRP frameworks also means that you can't use the UDF with SwiftUI right now. But We're planning to add Combine version of the UDF in near future. It will only affect subscription process, so you will not have to rewrite your domain logic. 
 
 Differences from others popular UDF implementations:
-RxFeedback - 
-The Composable Architecture -
-ReSwift -
- 
+
+[RxFeedback](https://github.com/NoTests/RxFeedback.swift) - requires RxSwift
+
+[The Composable Architecture](https://github.com/pointfreeco/swift-composable-architecture) - iOS13+ only because of Combine
+
+[ReSwift](https://github.com/ReSwift/ReSwift) - no instruments for modularization
+
  ## Basic Usage
  
+ 
+ 
  ## Installation
+ 
+You can add the UDF to an Xcode project by adding it as a package dependency.
+
+1. File › Swift Packages › Add Package Dependency…
+2. Enter "https://github.com/inDriver/UDF"
  
  ## Inspiration & Acknowledgments
