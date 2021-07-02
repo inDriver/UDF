@@ -75,6 +75,7 @@ class CounterViewController: UIViewController, ViewComponent {
    typealias Props = Int
 
     @IBOutlet var counterLabel: UILabel!
+    var disposer = Disposer()
 
     var props: Int = 0 {
         didSet {
