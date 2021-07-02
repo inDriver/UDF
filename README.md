@@ -1,22 +1,22 @@
 [![Swift Package Manager compatible](https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen.svg)](https://github.com/apple/swift-package-manager)
 # UDF
-**UDF** (Unidirectional Data Flow) is a library based on [Unidirectional Data Flow](https://en.wikipedia.org/wiki/Unidirectional_Data_Flow_(computer_science)) pattern. It lets you to build maintainable, testable and scalable apps.
+**UDF** (Unidirectional Data Flow) is a library based on [Unidirectional Data Flow](https://en.wikipedia.org/wiki/Unidirectional_Data_Flow_(computer_science)) pattern. It lets you build maintainable, testable, and scalable apps.
 
 ## Unidirectional Data Flow Design Pattern
-A unidirectional data flow is a design pattern where state (data) flows down and events (actions) flow up. It's important that UI never edits or sends back data. That's why UI usually provided with immutable data. It allows to have single source of truth for a whole app and effectively separate domain logic from UI.
+A unidirectional data flow is a design pattern where a state (data) flows down and events (actions) flow up. It's important that UI never edits or sends back data. That's why UI usually provided with immutable data.  It allows having a single source of truth for a whole app and effectively separates domain logic from UI.
 
 ![](https://developer.android.com/images/jetpack/compose/state-unidirectional-flow.png)
  
- Unidirectional Data Flow design pattern has been popular for a long time in web development. Now it's time for mobile development. Started from multi platform solutions like React Native and Flutter, Unidirectional Data Flow now becomes a part of native. [SwiftUI](https://developer.apple.com/documentation/swiftui/state-and-data-flow) for Swift and [Jetpack Compose](https://developer.android.com/jetpack/compose/architecture#udf) for Kotlin are implemented based on ideas of UDF. That's why we in inDriver decide to develop our own UDF library for our purposes.
+ Unidirectional Data Flow design pattern has been popular for a long time in web development. Now it's time for mobile development. Started from multi-platform solutions like React Native and Flutter, Unidirectional Data Flow now becomes a part of native. [SwiftUI](https://developer.apple.com/documentation/swiftui/state-and-data-flow) for Swift and [Jetpack Compose](https://developer.android.com/jetpack/compose/architecture#udf) for Kotlin are implemented based on ideas of UDF. That's why we in inDriver decide to develop our own UDF library for our purposes.
  
  ## Advantages
- Here is main advantages of this UDF implementation:
+ Here are the main advantages of this UDF implementation:
  * **Testable**. All domain logic implements in pure functions, so it's easy to unit test it. All UI depends only on provided data, so it's easy to configure and cover by snapshot tests.
- * **Scalable and Reusable**. Low Coupling and High Cohesion are ones of the basic principles of good software design. UDF implements such principles in practice. It allows to decouple UI and Domain, create reusable features and scale business logic in a convenient way. 
- * **Easy working with concurrency**. The UDF obviously doesn't solve all potential concurrent problems. But it alleviates working with concurrency in regular cases. State updating always runs on separate serial queue. It garantees consistency of a state after any changes. For UI or an async task you can use ViewComponent or ServiceComponent protocols respectively. They will subscribe your components on main or background thread so you can concentrate on business task rather than concurrency. 
- * **Free of FRP frameworks**. We decided not to use functional reactive frameworks in our library. Instead we provided it with convinient way for subscribing to state updates, so in most cases you don't even need to know how it works. Absence of FRP frameworks also means that you can't use the UDF with SwiftUI right now. But We're planning to add Combine version of the UDF in near future. It will only affect subscription process, so you will not have to rewrite your domain logic. 
+ * **Scalable and Reusable**. Low Coupling and High Cohesion are ones of the basic principles of good software design. UDF implements such principles in practice. It allows to decouple UI and Domain, create reusable features, and scale business logic in a convenient way. 
+ * **Easy working with concurrency**. The UDF obviously doesn't solve all potential concurrent problems. But it alleviates working with concurrency in regular cases. State updating always runs on separate serial queue. It guarantees the consistency of a state after any changes. For UI or an async task you can use ViewComponent or ServiceComponent protocols respectively. They will subscribe your components on main or background thread so you can concentrate on business tasks rather than concurrency. 
+ * **Free of FRP frameworks**. We decided not to use functional reactive frameworks in our library. Instead, we provided it with a convenient way for subscribing to state updates, so in most cases, you don't even need to know how it works. The absence of FRP frameworks also means that you can't use the UDF with SwiftUI right now. But We're planning to add Combine version of the UDF in near future. It will only affect the subscription process, so you will not have to rewrite your domain logic. 
 
-Differences from others popular UDF implementations:
+Differences from other popular UDF implementations:
 
 [RxFeedback](https://github.com/NoTests/RxFeedback.swift) - requires RxSwift
 
@@ -25,17 +25,17 @@ Differences from others popular UDF implementations:
 [ReSwift](https://github.com/ReSwift/ReSwift) - no instruments for modularization
 
  ## Basic Usage
- Let's imagine a simple counter app. It shows a counter label and two buttons "+" and "-" to increment and dicrement the counter. Let's consider the stages of its creation.
+ Let's imagine a simple counter app. It shows a counter label and two buttons "+" and "-" to increment and decrement the counter. Let's consider the stages of its creation.
  ### Building Domain
-Firstly we need to declare a state of the app:
+Firstly we need to declare the state of the app:
  
  ```swift
 struct AppState: Equatable {
     var counter = 0
 }
 ```
-**State** is all the data of an app. In our case it's just an int counter.
-Next we need to know when buttons are tapped:
+**State** is all the data of an app. In our case, it's just an int counter.
+Next, we need to know when buttons are tapped:
 
  ```swift
 enum CounterAction: Action {
@@ -44,7 +44,7 @@ enum CounterAction: Action {
 }
 ```
 We use an enum and `Action` protocol for that. **Action** describes all of the actions that can occur in your app.
-Next we need to update our state accouring to an action:
+Next, we need to update our state according to an action:
 
  ```swift
 func counterReducer(state: inout AppState, action: Action) {
@@ -64,7 +64,7 @@ Now we need to glue it together:
  ```swift
 let store = Store<AppState>(state: .init(), reducer: counterReducer)
 ```
-**Store** combine all above things together. 
+**Store** combines all the above things together. 
 
 ### View Component
 
@@ -92,7 +92,7 @@ class CounterViewController: UIViewController, ViewComponent {
     }
 }
 ```
-`CounterViewController` implements `ViewComponent` protocol. It guarantees that a component receive new state only if it was changes and always in main thread. In `CounterViewController` we declare props property and update UI in it's didSet. Now we have to connect out ViewController to the store:
+`CounterViewController` implements `ViewComponent` protocol. It guarantees that a component receives a new state only if it was changed and always in the main thread. In `CounterViewController` we declare props property and update UI in its didSet. Now we have to connect out ViewController to the store:
 
  ```swift
  let counterViewControler = CounterViewController()
@@ -102,7 +102,7 @@ class CounterViewController: UIViewController, ViewComponent {
   
  ### Modularisation 
  
-Imagine that you would like to reuse your `CounterViewController` in other app. Or you have much bigger reusable feature with many View Controllers. In this case your AppState will look like this: 
+Imagine that you would like to reuse your `CounterViewController` in another app. Or you have a much bigger reusable feature with many View Controllers. In this case, your AppState will look like this: 
  
   ```swift
 struct AppState: Equatable {
@@ -133,7 +133,7 @@ Obviously you don't want that your features will know about AppState. You can ea
  }
  
 ```
-Now you can move your features to separate frameworks and use wherever you want.
+Now you can move your features to separate frameworks and use then wherever you want.
  
  ## Installation
  
@@ -149,7 +149,7 @@ You can add the UDF to an Xcode project by adding it as a package dependency.
  
  [The Composable Architecture](https://github.com/pointfreeco/swift-composable-architecture) inspired our implementation of a scope function and modularisation.
 
-Also, we would like to thank all people that taking part in development, testing and using the UDF:
+Also, we would like to thank all people that taking part in development, testing, and using the UDF:
 [Artem Lytkin](https://github.com/artem-lytkin), [Ivan Dyagilev](https://github.com/jinnerrer), [Andrey Zamorshchikov](https://github.com/andreyzamorshchikov), [Dmitry Filippov](https://github.com/DimFilippov)...
 
 If you have any questions or suggestions, please contact [Anton Goncharov](https://github.com/MasterWatcher) or [Yuri Trykov](https://github.com/trykovyura).
