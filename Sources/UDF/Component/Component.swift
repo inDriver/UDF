@@ -1,5 +1,5 @@
 //
-//  StoreConnectable.swift
+//  Component.swift
 //  UDF
 //
 //  Created by Anton Goncharov on 16.10.2020.
