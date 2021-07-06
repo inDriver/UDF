@@ -33,7 +33,6 @@
 		9E45E1C92694A713003B0321 /* FakeActionListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E45E1C32694A713003B0321 /* FakeActionListener.swift */; };
 		9E45E1CA2694A713003B0321 /* FakeAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E45E1C42694A713003B0321 /* FakeAction.swift */; };
 		9EBAC3F12694A5CC008EDFD5 /* UDF.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EBAC3E72694A5CC008EDFD5 /* UDF.framework */; };
-		9EBAC3F62694A5CC008EDFD5 /* UDFTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBAC3F52694A5CC008EDFD5 /* UDFTests.swift */; };
 		9EBAC3F82694A5CC008EDFD5 /* UDF.h in Headers */ = {isa = PBXBuildFile; fileRef = 9EBAC3EA2694A5CC008EDFD5 /* UDF.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
@@ -77,7 +76,6 @@
 		9EBAC3EA2694A5CC008EDFD5 /* UDF.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UDF.h; sourceTree = "<group>"; };
 		9EBAC3EB2694A5CC008EDFD5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9EBAC3F02694A5CC008EDFD5 /* UDFTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UDFTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		9EBAC3F52694A5CC008EDFD5 /* UDFTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UDFTests.swift; sourceTree = "<group>"; };
 		9EBAC3F72694A5CC008EDFD5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -187,7 +185,6 @@
 				9E45E1982694A647003B0321 /* StoreBasicTests.swift */,
 				9E45E1992694A647003B0321 /* StoreDoubleScopeTests.swift */,
 				9E45E1962694A647003B0321 /* StoreScopeTests.swift */,
-				9EBAC3F52694A5CC008EDFD5 /* UDFTests.swift */,
 				9EBAC3F72694A5CC008EDFD5 /* Info.plist */,
 			);
 			path = UDFTests;
@@ -323,7 +320,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				9E45E1C72694A713003B0321 /* FakeComponent.swift in Sources */,
-				9EBAC3F62694A5CC008EDFD5 /* UDFTests.swift in Sources */,
 				9E45E1A02694A647003B0321 /* StoreDoubleScopeTests.swift in Sources */,
 				9E45E19B2694A647003B0321 /* ComponentTests.swift in Sources */,
 				9E45E19D2694A647003B0321 /* StoreScopeTests.swift in Sources */,
