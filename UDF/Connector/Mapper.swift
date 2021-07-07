@@ -7,8 +7,8 @@
 
 import Foundation
 
-/// A protocol for mapping `State` to `Props` for a `Component`.
-/// You can use instances of `Mapper` inside a `Connector` to decompose process of mapping.
+/// A protocol for mapping `State` to `Props` for a ``Component``.
+/// You can use instances of ``Mapper`` inside a ``Connector`` to decompose process of mapping.
 public protocol Mapper {
     associatedtype State
     associatedtype Props: Equatable
