@@ -15,7 +15,7 @@
 ///   - b: An argument in `B`.
 /// - Returns: A new function that takes a value in `A` and returns a value in `C`.
 /// - Note: This function is commonly seen in operator form as `>>>`.
-public func pipe<A, B, C>(_ f: @escaping (_ a: A) -> B, _ g: @escaping (_ b: B) -> C) -> (A) -> C {
+func pipe<A, B, C>(_ f: @escaping (_ a: A) -> B, _ g: @escaping (_ b: B) -> C) -> (A) -> C {
     return { (a: A) -> C in
         g(f(a))
     }

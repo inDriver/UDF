@@ -6,7 +6,7 @@
 //
 import Foundation
 
-/// Parent protocol for components. Use `ViewComponent` or `ServiceComponent` for your component.
+/// Parent protocol for components. Use ``ViewComponent`` or ``ServiceComponent`` for your component.
 public protocol Component: AnyObject {
 
     associatedtype Props: Equatable
@@ -18,7 +18,7 @@ public protocol Component: AnyObject {
     /// Connects a component to a store.
     ///
     /// - Parameters:
-    ///   - store: A `Store` to connect to.
+    ///   - store: A ``Store`` to connect to.
     ///   - stateToProps: A closure that transforms the `Component`'s `State` into a `Props` of the `Component`.
     ///   - transform: A closure that transforms the `Store`'s `State` to a `State` of the `Component`.
     func connect<State, ConnectorState>(

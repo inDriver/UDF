@@ -25,7 +25,7 @@
 import Dispatch
 import Foundation
 
-/// Disposable are the simple wrappers over closures which allow us to have a context when debug.
+/// Disposable are the simple wrappers over closures which allow you to have a context when debug.
 public class Disposable {
     private let disposeCommand: () -> Void // underlying closure
 

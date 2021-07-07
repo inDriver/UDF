@@ -8,7 +8,7 @@
 import Foundation
 /// The Store is a simple `State` manager.
 /// An app usually has a single instance of the main store.
-/// Use the `scope` method to derive proxy stores that can be passed to submodules.
+/// Use the `scope` methods to derive proxy stores that can be passed to submodules.
 ///
 /// After action got dispatched,
 /// the store will get the new instance of the State by calling the reducer with the current state and an action.
@@ -122,29 +122,40 @@ public class Store<State>: ActionDispatcher {
 
     // MARK: - Scope
 
+    /// Scopes the store to a local state.
+    ///
+    /// - Parameter keypath: A keypath for a `LocalState`.
+    /// - Returns: A `Store` with scoped `State`.
     public func scope<LocalState>(_ keyPath: KeyPath<State, LocalState>) -> Store<LocalState> {
         scope { $0[keyPath: keyPath] }
     }
 
+    /// Scopes the store to a local state.
+    ///
+    /// - Parameter keypath: A keypath for a `Equatable` `LocalState`.
+    ///  if `LocalState` is the same after update, `Store` subscrbers will not be notified.
+    /// - Returns: A `Store` with scoped `State`.
     public func scope<LocalState: Equatable>(_ keyPath: KeyPath<State, LocalState>) -> Store<LocalState> {
         scope { $0[keyPath: keyPath] }
     }
 
+    /// Scopes the store to a local state.
+    ///
+    /// - Parameter transform: A function that transforms the `State` into a `LocalState`.
+    /// - Returns: A `Store` with scoped `State`.
     public func scope<LocalState>(transform: @escaping (State) -> LocalState) -> Store<LocalState> {
         scope(transform: transform, shoundUpdateLocalState: { _, _ in true })
     }
 
+    /// Scopes the store to a local state.
+    ///
+    /// - Parameter transform: A function that transforms the `State` into a `LocalState`.
+    ///  if `LocalState` is the same after update, `Store` subscrbers will not be notified.
+    /// - Returns: A `Store` with scoped `State`.
     public func scope<LocalState: Equatable>(transform: @escaping (State) -> LocalState) -> Store<LocalState> {
         scope(transform: transform, shoundUpdateLocalState: !=)
     }
 
-    /// Scopes the store to a local state.
-    ///
-    /// - Parameters:
-    ///   - transform: A function that transforms the `State` into a `LocalState`.
-    ///   - shoundUpdateLocalState: A function that compares old and new local state and
-    /// decides if the state should be updated.
-    /// - Returns: A publisher of stores with its domain (state and action) transformed.
     fileprivate func scope<LocalState>(
         transform: @escaping (State) -> LocalState,
         shoundUpdateLocalState: @escaping (LocalState, LocalState) -> Bool
