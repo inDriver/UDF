@@ -151,7 +151,7 @@ You can add the UDF to an Xcode project by adding it as a package dependency.
  [The Composable Architecture](https://github.com/pointfreeco/swift-composable-architecture) inspired our implementation of a scope function and modularisation.
 
 Also, we would like to thank all people that taking part in development, testing, and using the UDF:
-[Artem Lytkin](https://github.com/artem-lytkin), [Ivan Dyagilev](https://github.com/jinnerrer), [Andrey Zamorshchikov](https://github.com/andreyzamorshchikov), [Dmitry Filippov](https://github.com/DimFilippov)...
+[Artem Lytkin](https://github.com/artem-lytkin), [Ivan Dyagilev](https://github.com/jinnerrer), [Andrey Zamorshchikov](https://github.com/andreyzamorshchikov), [Dmitry Filippov](https://github.com/DimFilippov), [Eldar Adelshin](https://github.com/AdelshinEldar), [Anton Nochnoy](https://github.com/nochnoy-anton), [Denis Sidorenko](https://github.com/justaSid), [Ilya Kuznetsov](https://github.com/imkuznetsov) and [Viktor Gordienko](https://github.com/v-gordienko).
 
 If you have any questions or suggestions, please contact [Anton Goncharov](https://github.com/MasterWatcher) or [Yuri Trykov](https://github.com/trykovyura).
 
