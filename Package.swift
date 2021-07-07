@@ -20,9 +20,10 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "UDF",
-            dependencies: []),
+            path: "UDF"),
         .testTarget(
             name: "UDFTests",
-            dependencies: ["UDF"]),
+            dependencies: ["UDF"],
+            path: "UDFTests"),
     ]
 )
