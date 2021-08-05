@@ -15,16 +15,17 @@ public protocol Component: AnyObject {
     var props: Props { get set }
     var disposer: Disposer { get }
 
-    /// Connects a component to a store.
+    /// Connects a component to a store using a connector.
     ///
     /// - Parameters:
-    ///   - store: A ``Store`` to connect to.
-    ///   - stateToProps: A closure that transforms the `Component`'s `State` into a `Props` of the `Component`.
-    ///   - transform: A closure that transforms the `Store`'s `State` to a `State` of the `Component`.
-    func connect<State, ConnectorState>(
+    ///   - store: A `Store` to connect to.
+    ///   - by: A `Connector` that transforms State to Props.
+    ///   - transform: A closure that transforms the `Store`'s `State` to a `State` of the `Connector`.
+    func connect<State, ConnectorType: Connector>(
         to store: Store<State>,
-        stateToProps: @escaping (ConnectorState, ActionDispatcher) -> Props,
-        transform: @escaping (State) -> ConnectorState)
+        by connector: ConnectorType,
+        transform: @escaping (State) -> ConnectorType.State
+    ) where ConnectorType.Props == Props
 }
 
 public extension Component {
@@ -36,33 +37,6 @@ public extension Component {
     func connect<State>(to store: Store<State>) where State == Props {
         connect(to: store) { state, _ in state }
     }
-
-    /// Connects a component to a store with whole `Store`'s `State`.
-    ///
-    /// - Parameters:
-    ///   - store: A `Store` to connect to.
-    ///   - stateToProps: A closure that transforms the `Store`'s `State` into a `Props` of the `Component`.
-    func connect<State>(
-        to store: Store<State>,
-        stateToProps: @escaping (State, ActionDispatcher) -> Props) {
-        connect(to: store, stateToProps: stateToProps) { $0 }
-    }
-
-    /// Connects a component to a store with a keypath.
-    ///
-    /// - Parameters:
-    ///   - store: A `Store` to connect to.
-    ///   - stateToProps: A closure that transforms the `Component`'s `State` into a `Props` of the `Component`.
-    ///   - keypath: A keypath for a `State` of the `Component`.
-    func connect<State, ConnectorState>(
-        to store: Store<State>,
-        stateToProps: @escaping (ConnectorState, ActionDispatcher) -> Props,
-        state keypath: KeyPath<State, ConnectorState>) {
-        connect(to: store, stateToProps: stateToProps) { $0[keyPath: keypath] }
-    }
-}
-
-public extension Component {
 
     /// Connects a component to a store using a connector with whole `Store`'s `State`.
     ///
@@ -89,24 +63,50 @@ public extension Component {
     ) where ConnectorType.Props == Props {
         connect(to: store, by: connector) { $0[keyPath: keypath] }
     }
+}
 
-    /// Connects a component to a store using a connector.
+public extension Component {
+
+    /// Connects a component to a store with stateToProps closure and whole `Store`'s `State`.
     ///
     /// - Parameters:
     ///   - store: A `Store` to connect to.
-    ///   - by: A `Connector` that transforms State to Props.
-    ///   - transform: A closure that transforms the `Store`'s `State` to a `State` of the `Connector`.
-    func connect<State, ConnectorType: Connector>(
+    ///   - stateToProps: A closure that transforms the `Store`'s `State` into a `Props` of the `Component`.
+    func connect<State>(
         to store: Store<State>,
-        by connector: ConnectorType,
-        transform: @escaping (State) -> ConnectorType.State
-    ) where ConnectorType.Props == Props {
-        connect(to: store, stateToProps: connector.stateToProps, transform: transform)
+        stateToProps: @escaping (State, ActionDispatcher) -> Props) {
+        connect(to: store, stateToProps: stateToProps) { $0 }
+    }
+
+    /// Connects a component to a store with stateToProps closure and keypath.
+    ///
+    /// - Parameters:
+    ///   - store: A `Store` to connect to.
+    ///   - stateToProps: A closure that transforms the `Component`'s `State` into a `Props` of the `Component`.
+    ///   - keypath: A keypath for a `State` of the `Component`.
+    func connect<State, ConnectorState>(
+        to store: Store<State>,
+        stateToProps: @escaping (ConnectorState, ActionDispatcher) -> Props,
+        state keypath: KeyPath<State, ConnectorState>) {
+        connect(to: store, stateToProps: stateToProps) { $0[keyPath: keypath] }
+    }
+
+    /// Connects a component to a store with stateToProps closure.
+    ///
+    /// - Parameters:
+    ///   - store: A ``Store`` to connect to.
+    ///   - stateToProps: A closure that transforms the `Component`'s `State` into a `Props` of the `Component`.
+    ///   - transform: A closure that transforms the `Store`'s `State` to a `State` of the `Component`.
+    func connect<State, ConnectorState>(
+        to store: Store<State>,
+        stateToProps: @escaping (ConnectorState, ActionDispatcher) -> Props,
+        transform: @escaping (State) -> ConnectorState) {
+        connect(to: store, by: ClosureConnector(closure: stateToProps), transform: transform)
     }
 }
 
 public extension Component where Self: Connector {
-    /// Connects a component to a store when the `Component` is a `Connector`and with whole `Store`'s `State`.
+    /// Connects a component to a store when the `Component` is a `Connector` and with whole `Store`'s `State`.
     ///
     /// - Parameters:
     ///   - store: A `Store` to connect to.
@@ -131,30 +131,32 @@ public extension Component where Self: Connector {
     func connect<State>(to store: Store<State>, transform: @escaping (State) -> Self.State) {
         store.observe(on: queue) { [weak self] state in
             guard let self = self else { return }
-            self.updateProps(state: state, stateToProps: self.stateToProps, dispatcher: store, transform: transform)
+            self.updateProps(state: state, connector: self, dispatcher: store, transform: transform)
         }.dispose(on: disposer)
     }
 }
 
 public extension Component {
-    func connect<State, ConnectorState>(
+    func connect<State, ConnectorType: Connector>(
         to store: Store<State>,
-        stateToProps: @escaping (ConnectorState, ActionDispatcher) -> Props,
-        transform: @escaping (State) -> ConnectorState) {
+        by connector: ConnectorType,
+        transform: @escaping (State) -> ConnectorType.State
+    ) where ConnectorType.Props == Props {
         store.observe(on: queue) { [weak self] state in
-            self?.updateProps(state: state, stateToProps: stateToProps, dispatcher: store, transform: transform)
+            self?.updateProps(state: state, connector: connector, dispatcher: store, transform: transform)
         }.dispose(on: disposer)
     }
 }
 
 extension Component {
-    func updateProps<State, ConnectorState>(
+    func updateProps<State, ConnectorType: Connector>(
         state: State,
-        stateToProps: @escaping (ConnectorState, ActionDispatcher) -> Props,
+        connector: ConnectorType,
         dispatcher: ActionDispatcher,
-        transform: @escaping (State) -> ConnectorState) {
+        transform: @escaping (State) -> ConnectorType.State
+    ) where ConnectorType.Props == Props {
         let componentState = transform(state)
-        let newProps = stateToProps(componentState, dispatcher)
+        let newProps = connector.stateToProps(state: componentState, dispatcher: dispatcher)
         guard props != newProps else { return }
         props = newProps
     }
