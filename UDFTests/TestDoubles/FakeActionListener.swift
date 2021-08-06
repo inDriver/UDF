@@ -8,11 +8,9 @@
 import UDF
 import Foundation
 
-class FakeActionListener: ActionListener {
+class FakeActionListener: ViewActionListener {
 
     typealias Props = (Int, Action)
-
-    var queue: DispatchQueue { .main }
 
     var propsHistory = [(Int, Action)]()
 
@@ -36,7 +34,4 @@ class FakeActionListener: ActionListener {
     deinit {
         onDeinit()
     }
-
-    class DefaultAction: Action {}
 }
-
