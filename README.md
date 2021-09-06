@@ -155,3 +155,6 @@ Also, we would like to thank all people that taking part in development, testing
 
 If you have any questions or suggestions, please contact [Anton Goncharov](https://github.com/MasterWatcher) or [Yuri Trykov](https://github.com/trykovyura).
 
+ ## License
+
+UDF is released under the license. [See LICENSE](https://github.com/inDriver/UDF/blob/master/LICENSE) for details.
