@@ -11,6 +11,7 @@ A unidirectional data flow is a design pattern where a state (data) flows down a
 <p align="center">
 <img width="312" src="https://user-images.githubusercontent.com/739803/124285921-17a10b80-db57-11eb-8f9b-efa84522e650.png" alt="UDF">
  </p>
+ 
  Unidirectional Data Flow design pattern has been popular for a long time in web development. Now it's time for mobile development. Started from multi-platform solutions like React Native and Flutter, Unidirectional Data Flow now becomes a part of native. [SwiftUI](https://developer.apple.com/documentation/swiftui/state-and-data-flow) for Swift and [Jetpack Compose](https://developer.android.com/jetpack/compose/architecture#udf) for Kotlin are implemented based on ideas of UDF. That's why we in inDriver decide to develop our own UDF library for our purposes.
  
  ## Advantages
