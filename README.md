@@ -1,11 +1,15 @@
 [![Swift Package Manager compatible](https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen.svg)](https://github.com/apple/swift-package-manager)
 # UDF
+<p align="center">
+<img src="./Docs/img/logo.svg" alt="UDF" height="340">
+ </p>
+
 **UDF** (Unidirectional Data Flow) is a library based on [Unidirectional Data Flow](https://en.wikipedia.org/wiki/Unidirectional_Data_Flow_(computer_science)) pattern. It lets you build maintainable, testable, and scalable apps.
 
 ## Unidirectional Data Flow Design Pattern
 A unidirectional data flow is a design pattern where a state (data) flows down and events (actions) flow up. It's important that UI never edits or sends back data. That's why UI usually provided with immutable data.  It allows having a single source of truth for a whole app and effectively separates domain logic from UI.
 <p align="center">
-<img width="312" src="https://user-images.githubusercontent.com/739803/124285921-17a10b80-db57-11eb-8f9b-efa84522e650.png">
+<img width="312" src="https://user-images.githubusercontent.com/739803/124285921-17a10b80-db57-11eb-8f9b-efa84522e650.png" alt="UDF">
  </p>
  
  Unidirectional Data Flow design pattern has been popular for a long time in web development. Now it's time for mobile development. Started from multi-platform solutions like React Native and Flutter, Unidirectional Data Flow now becomes a part of native. [SwiftUI](https://developer.apple.com/documentation/swiftui/state-and-data-flow) for Swift and [Jetpack Compose](https://developer.android.com/jetpack/compose/architecture#udf) for Kotlin are implemented based on ideas of UDF. That's why we in inDriver decide to develop our own UDF library for our purposes.
@@ -97,8 +101,8 @@ class CounterViewController: UIViewController, ViewComponent {
 `CounterViewController` implements `ViewComponent` protocol. It guarantees that a component receives a new state only if it was changed and always in the main thread. In `CounterViewController` we declare props property and update UI in its didSet. Now we have to connect out ViewController to the store:
 
  ```swift
- let counterViewControler = CounterViewController()
- counterViewControler.connect(to: store, state: \.counter)
+ let counterViewController = CounterViewController()
+ counterViewController.connect(to: store, state: \.counter)
   ```
  Notice that we can choose with part of the state we want to observe.
   
@@ -156,3 +160,20 @@ Also, we would like to thank all people that taking part in development, testing
 
 If you have any questions or suggestions, please contact [Anton Goncharov](https://github.com/MasterWatcher) or [Yuri Trykov](https://github.com/trykovyura).
 
+ ## License
+
+UDF is released under the Apache 2.0 license. [See LICENSE](https://github.com/inDriver/UDF/blob/master/LICENSE) for details.
+
+    Copyright 2021  Suol Innovations Ltd.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
