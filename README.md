@@ -1,8 +1,8 @@
 [![Swift Package Manager compatible](https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen.svg)](https://github.com/apple/swift-package-manager)
 # UDF
-
+<p align="center">
 <img src="./Docs/img/logo.svg" alt="UDF" height="340">
-
+ </p>
 **UDF** (Unidirectional Data Flow) is a library based on [Unidirectional Data Flow](https://en.wikipedia.org/wiki/Unidirectional_Data_Flow_(computer_science)) pattern. It lets you build maintainable, testable, and scalable apps.
 
 ## Unidirectional Data Flow Design Pattern
