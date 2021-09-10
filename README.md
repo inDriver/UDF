@@ -100,8 +100,8 @@ class CounterViewController: UIViewController, ViewComponent {
 `CounterViewController` implements `ViewComponent` protocol. It guarantees that a component receives a new state only if it was changed and always in the main thread. In `CounterViewController` we declare props property and update UI in its didSet. Now we have to connect out ViewController to the store:
 
  ```swift
- let counterViewControler = CounterViewController()
- counterViewControler.connect(to: store, state: \.counter)
+ let counterViewController = CounterViewController()
+ counterViewController.connect(to: store, state: \.counter)
   ```
  Notice that we can choose with part of the state we want to observe.
   
