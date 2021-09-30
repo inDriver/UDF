@@ -17,6 +17,7 @@ import Foundation
 
 /// A protocol for listening of actions from a ``Store``.
 /// Use it only if you really need specific ``Action``.
+/// Not that along with ``Action`` you will get updated State.
 /// Good candidates for ``ActionListener`` are App's Analytics.
 /// Otherwise use ``ViewComponent`` or ``ServiceComponent`` instead.
 public protocol ActionListener: AnyObject {
