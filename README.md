@@ -106,7 +106,7 @@ class CounterViewController: UIViewController, ViewComponent {
   ```
  Notice that we can choose with part of the state we want to observe.
   
- ### Modularisation 
+ ### Modularization 
  
 Imagine that you would like to reuse your `CounterViewController` in another app. Or you have a much bigger reusable feature with many View Controllers. In this case, your AppState will look like this: 
  
