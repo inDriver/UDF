@@ -197,9 +197,9 @@ class ProxyStore<LocalState, State>: Store<LocalState> {
         self.shoundUpdateLocalState = shoundUpdateLocalState
         super.init(state: transform(store.state), reducer: { _, _ in }, dispatchQueue: dispatchQueue)
 
-        store.onAction { [weak self] _, action in
+        store.onAction { [weak self] state, action in
             guard let self = self else { return }
-            self.actionsObservers.forEach { $0.notify(with: (self.state, action)) }
+            self.actionsObservers.forEach { $0.notify(with: (transform(state), action)) }
         }.dispose(on: disposer)
 
         store.observe { [weak self] state in
