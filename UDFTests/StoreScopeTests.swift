@@ -100,6 +100,33 @@ class StoreScopeTests: XCTestCase {
         XCTAssertTrue(action is FakeAction)
     }
 
+    func testScopeStoreReceiveUpdatedStateInActionListener() {
+        // given
+        let initState = TestState(localState: 1, otherLocalState: "test")
+        func reducer(state: inout TestState, with _: Action) {
+            state.localState = 42
+        }
+        store = Store(state: initState, reducer: reducer)
+        var state: Int?
+        var action: Action?
+        let expectation = self.expectation(description: #function)
+        let localStore = store.scope(\.localState)
+
+        // when
+        localStore.onAction {
+            state = $0
+            action = $1
+            expectation.fulfill()
+        }.dispose(on: disposer)
+        store.dispatch(FakeAction())
+
+        // then
+        waitForExpectations(timeout: 0.1, handler: nil)
+        XCTAssertEqual(state, 42)
+        XCTAssertTrue(action is FakeAction)
+
+    }
+
     func testGlobalStoreReceiveStateUpdateFromLocalStore() {
         // given
         let initState = TestState(localState: 1, otherLocalState: "test")
