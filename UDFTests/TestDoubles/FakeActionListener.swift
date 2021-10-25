@@ -16,19 +16,15 @@
 import UDF
 import Foundation
 
-class FakeActionListener: ActionListener {
+class FakeActionListener: ViewActionListener {
 
     typealias Props = (Int, Action)
 
-    var queue: DispatchQueue { .main }
-
     var propsHistory = [(Int, Action)]()
 
-    var props: (Int, Action) = (0, DefaultAction()) {
-        didSet {
-            propsHistory.append(props)
-            propsDidSet(propsHistory)
-        }
+    func update(props: (Int, Action)) {
+        propsHistory.append(props)
+        propsDidSet(propsHistory)
     }
 
     var disposer = Disposer()
@@ -44,7 +40,4 @@ class FakeActionListener: ActionListener {
     deinit {
         onDeinit()
     }
-
-    class DefaultAction: Action {}
 }
-
