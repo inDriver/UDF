@@ -7,19 +7,19 @@
 **UDF** (Unidirectional Data Flow) is a library based on [Unidirectional Data Flow](https://en.wikipedia.org/wiki/Unidirectional_Data_Flow_(computer_science)) pattern. It lets you build maintainable, testable, and scalable apps.
 
 ## Unidirectional Data Flow Design Pattern
-A unidirectional data flow is a design pattern where a state (data) flows down and events (actions) flow up. It's important that UI never edits or sends back data. That's why UI usually provided with immutable data.  It allows having a single source of truth for a whole app and effectively separates domain logic from UI.
+A unidirectional data flow is a design pattern where a state (data) flows down and events (actions) flow up. It's important that UI never edits or sends back data. That's why UI is usually provided with immutable data.  It allows having a single source of truth for a whole app and effectively separates domain logic from UI.
 <p align="center">
 <img width="312" src="https://user-images.githubusercontent.com/739803/124285921-17a10b80-db57-11eb-8f9b-efa84522e650.png" alt="UDF">
  </p>
  
- Unidirectional Data Flow design pattern has been popular for a long time in web development. Now it's time for mobile development. Started from multi-platform solutions like React Native and Flutter, Unidirectional Data Flow now becomes a part of native. [SwiftUI](https://developer.apple.com/documentation/swiftui/state-and-data-flow) for Swift and [Jetpack Compose](https://developer.android.com/jetpack/compose/architecture#udf) for Kotlin are implemented based on ideas of UDF. That's why we in inDriver decide to develop our own UDF library for our purposes.
+ Unidirectional Data Flow design pattern has been popular for a long time in the web development. Now it's time for the mobile development. Having started from multi-platform solutions like React Native and Flutter, Unidirectional Data Flow now becomes a part of native. [SwiftUI](https://developer.apple.com/documentation/swiftui/state-and-data-flow) for Swift and [Jetpack Compose](https://developer.android.com/jetpack/compose/architecture#udf) for Kotlin are implemented based on ideas of UDF. That's why we in inDriver decided to develop our own UDF library for our purposes.
  
  ## Advantages
  Here are the main advantages of this UDF implementation:
  * **Testable**. All domain logic implements in pure functions, so it's easy to unit test it. All UI depends only on provided data, so it's easy to configure and cover by snapshot tests.
- * **Scalable and Reusable**. Low Coupling and High Cohesion are ones of the basic principles of good software design. UDF implements such principles in practice. It allows to decouple UI and Domain, create reusable features, and scale business logic in a convenient way. 
+ * **Scalable and Reusable**. Low Coupling and High Cohesion are examples of the basic principles of good software design. UDF implements such principles in practice. It allows to decouple UI and Domain, create reusable features, and scale business logic in a convenient way. 
  * **Easy working with concurrency**. The UDF obviously doesn't solve all potential concurrent problems. But it alleviates working with concurrency in regular cases. State updating always runs on separate serial queue. It guarantees the consistency of a state after any changes. For UI or an async task you can use ViewComponent or ServiceComponent protocols respectively. They will subscribe your components on main or background thread so you can concentrate on business tasks rather than concurrency. 
- * **Free of FRP frameworks**. We decided not to use functional reactive frameworks in our library. Instead, we provided it with a convenient way for subscribing to state updates, so in most cases, you don't even need to know how it works. The absence of FRP frameworks also means that you can't use the UDF with SwiftUI right now. But We're planning to add Combine version of the UDF in near future. It will only affect the subscription process, so you will not have to rewrite your domain logic. 
+ * **Free of FRP frameworks**. We decided not to use functional reactive frameworks in our library. Instead, we provided it with a convenient way for subscribing to state updates, so in most cases, you don't even need to know how it works. The absence of FRP frameworks also means that you can't use the UDF with SwiftUI right now. But We plan to add Combine version of the UDF in near future. It will only affect the subscription process, so you will not have to rewrite your domain logic. 
 
 Differences from other popular UDF implementations:
 
@@ -48,7 +48,7 @@ enum CounterAction: Action {
   case incrementButtonTapped
 }
 ```
-We use an enum and `Action` protocol for that. **Action** describes all of the actions that can occur in your app.
+We use an enum and an `Action` protocol for that. **Action** describes all of the actions that can occur in your app.
 Next, we need to update our state according to an action:
 
  ```swift
@@ -98,13 +98,13 @@ class CounterViewController: UIViewController, ViewComponent {
     }
 }
 ```
-`CounterViewController` implements `ViewComponent` protocol. It guarantees that a component receives a new state only if it was changed and always in the main thread. In `CounterViewController` we declare props property and update UI in its didSet. Now we have to connect out ViewController to the store:
+`CounterViewController` implements `ViewComponent` protocol. It guarantees that a component receives a new state only if the state was changed and this process always occurs in the main thread. In `CounterViewController` we declare props property and update UI in its didSet. Now we have to connect our ViewController to the store:
 
  ```swift
  let counterViewController = CounterViewController()
  counterViewController.connect(to: store, state: \.counter)
   ```
- Notice that we can choose with part of the state we want to observe.
+ Notice that we can choose witch part of the state we want to observe.
   
  ### Modularization 
  
@@ -116,7 +116,7 @@ struct AppState: Equatable {
     var bigFeature = BigFeature()
 }
 ```
-Obviously you don't want that your features will know about AppState. You can easily decouple them by scope:
+Obviously you don't want your features to know about AppState. You can easily decouple them by scope:
 
  ```swift
  let store = Store<AppState>(state: .init(), reducer: counterReducer)
@@ -139,7 +139,7 @@ Obviously you don't want that your features will know about AppState. You can ea
  }
  
 ```
-Now you can move your features to separate frameworks and use then wherever you want.
+Now you can move your features to separate frameworks and use them wherever you want.
  
  ## Installation
  
@@ -155,10 +155,10 @@ You can add the UDF to an Xcode project by adding it as a package dependency.
  
  [The Composable Architecture](https://github.com/pointfreeco/swift-composable-architecture) inspired our implementation of a scope function and modularisation.
 
-Also, we would like to thank all people that taking part in development, testing, and using the UDF:
+Also, we would like to thank all people that took part in development, testing, and using the UDF:
 [Artem Lytkin](https://github.com/artem-lytkin), [Ivan Dyagilev](https://github.com/jinnerrer), [Andrey Zamorshchikov](https://github.com/andreyzamorshchikov), [Dmitry Filippov](https://github.com/DimFilippov), [Eldar Adelshin](https://github.com/AdelshinEldar), [Anton Nochnoy](https://github.com/nochnoy-anton), [Denis Sidorenko](https://github.com/justaSid), [Ilya Kuznetsov](https://github.com/imkuznetsov) and [Viktor Gordienko](https://github.com/v-gordienko).
 
-If you have any questions or suggestions, please contact [Anton Goncharov](https://github.com/MasterWatcher) or [Yuri Trykov](https://github.com/trykovyura).
+If you have any questions or suggestions, please do not hesitate to contact [Anton Goncharov](https://github.com/MasterWatcher) or [Yuri Trykov](https://github.com/trykovyura).
 
  ## License
 
