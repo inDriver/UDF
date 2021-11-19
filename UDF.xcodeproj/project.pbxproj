@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7D1847E72747DE510027823F /* Propsable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D1847E62747DE500027823F /* Propsable.swift */; };
 		7D8020FA27266F6C0088B46D /* ActionListenerConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8020F927266F6C0088B46D /* ActionListenerConnector.swift */; };
 		7D8020FC27266FDF0088B46D /* ClosureActionListenerConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8020FB27266FDF0088B46D /* ClosureActionListenerConnector.swift */; };
 		7D8020FE2726700E0088B46D /* ServiceActionListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8020FD2726700E0088B46D /* ServiceActionListener.swift */; };
@@ -54,6 +55,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		7D1847E62747DE500027823F /* Propsable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Propsable.swift; sourceTree = "<group>"; };
 		7D8020F927266F6C0088B46D /* ActionListenerConnector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionListenerConnector.swift; sourceTree = "<group>"; };
 		7D8020FB27266FDF0088B46D /* ClosureActionListenerConnector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClosureActionListenerConnector.swift; sourceTree = "<group>"; };
 		7D8020FD2726700E0088B46D /* ServiceActionListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceActionListener.swift; sourceTree = "<group>"; };
@@ -148,6 +150,7 @@
 				9E45E1B12694A701003B0321 /* Component.swift */,
 				9E45E1B22694A701003B0321 /* ViewComponent.swift */,
 				9E45E1B32694A701003B0321 /* ServiceComponent.swift */,
+				7D1847E62747DE500027823F /* Propsable.swift */,
 			);
 			path = Component;
 			sourceTree = "<group>";
@@ -342,6 +345,7 @@
 				9E45E18C2694A640003B0321 /* Reducer.swift in Sources */,
 				7D8020FE2726700E0088B46D /* ServiceActionListener.swift in Sources */,
 				7D8020FC27266FDF0088B46D /* ClosureActionListenerConnector.swift in Sources */,
+				7D1847E72747DE510027823F /* Propsable.swift in Sources */,
 				9E45E18B2694A640003B0321 /* Utils.swift in Sources */,
 				9E45E1B92694A701003B0321 /* ServiceComponent.swift in Sources */,
 				7D802100272670370088B46D /* ViewActionListener.swift in Sources */,
