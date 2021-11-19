@@ -15,12 +15,9 @@
 import Foundation
 
 /// Parent protocol for components. Use ``ViewComponent`` or ``ServiceComponent`` for your component.
-public protocol Component: AnyObject {
-
-    associatedtype Props: Equatable
+public protocol Component: Propsable {
 
     var queue: DispatchQueue { get }
-    var props: Props { get set }
     var disposer: Disposer { get }
 
     /// Connects a component to a store using a connector.
