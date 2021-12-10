@@ -33,6 +33,7 @@ public class Store<State>: ActionDispatcher {
     fileprivate var stateObservers: Set<Subscription<State>> = []
 
     private let reducer: Reducer<State>
+    private var dynamicReducers: [String: Reducer<State>] = [:]
 
     public init(
         state: State,
@@ -59,13 +60,16 @@ public class Store<State>: ActionDispatcher {
     /// Sync version of the `dispatch` method.
     fileprivate func dispatchSync(_ action: Action) {
         reducer(&state, action)
+        dynamicReducers.forEach { $0.value(&state, action) }
         actionsObservers.forEach { $0.notify(with: (self.state, action)) }
         stateObservers.forEach { $0.notify(with: self.state) }
     }
 
     /// Subscribe a component to observe the state **after** each change
     ///
-    /// - Parameter observer: this closure will be called **when subscribe** and every time **after** state has changed.
+    /// - Parameters:
+    ///   - queue: queue of a subscription. Pass nill to use current queue.
+    ///   - observer: this closure will be called **when subscribe** and every time **after** state has changed.
     ///
     /// - Returns: A `Disposable`, to stop observation call .dispose() on it, or add it to a `Disposer`
     public func observe(on queue: DispatchQueue? = nil, with observer: @escaping (State) -> Void) -> Disposable {
@@ -92,14 +96,16 @@ public class Store<State>: ActionDispatcher {
         return stopObservation.async(on: storeDispatchQueue)
     }
 
-    /// Subscribes to observe Actions and the old State **before** the change when action has happened.
+    /// Subscribes to observe Actions and a State when action has happened.
     /// Recommended using only for debugging purposes.
     /// ```
     /// store.onAction{ action, state in
     ///     print(action)
     /// }
     /// ```
-    /// - Parameter observe: this closure will be executed whenever the action happened **after** the state change
+    /// - Parameters:
+    ///   - queue: queue of a subscription. Pass nill to use current queue.
+    ///   - observe: this closure will be executed whenever the action happened **after** the state change
     ///
     /// - Returns: A `Disposable`, to stop observation call .dispose() on it, or add it to a `Disposer`
     public func onAction(
@@ -126,6 +132,29 @@ public class Store<State>: ActionDispatcher {
         )
 
         return stopObservation.async(on: storeDispatchQueue)
+    }
+
+    /// Adds a dynamic reducer to the `Store`.
+    ///
+    /// - Parameters:
+    ///   - reducer: A local reducer.
+    ///   - state: A keypath for a `State` of the reducer.
+    ///   - key: A key for storing the reducer. Use the key for removing the reducer when it's not needed.
+    public func add<LocalState>(reducer: @escaping Reducer<LocalState>, state keypath: WritableKeyPath<State, LocalState>, withKey key: String) {
+        storeDispatchQueue.async {
+            self.dynamicReducers[key] = {(state: inout State, action: Action) in
+                reducer(&state[keyPath: keypath], action)
+            }
+        }
+    }
+
+    /// Removes a dynamic reducer from the `Store`.
+    ///
+    /// - Parameter key: A key for the reducer. Use the same key that used in add method.
+    public func remove(reducerWithKey key: String) {
+        storeDispatchQueue.async {
+            self.dynamicReducers.removeValue(forKey: key)
+        }
     }
 
     // MARK: - Scope
