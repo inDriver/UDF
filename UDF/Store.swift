@@ -67,7 +67,9 @@ public class Store<State>: ActionDispatcher {
 
     /// Subscribe a component to observe the state **after** each change
     ///
-    /// - Parameter observer: this closure will be called **when subscribe** and every time **after** state has changed.
+    /// - Parameters:
+    ///   - queue: queue of a subscription. Pass nill to use current queue.
+    ///   - observer: this closure will be called **when subscribe** and every time **after** state has changed.
     ///
     /// - Returns: A `Disposable`, to stop observation call .dispose() on it, or add it to a `Disposer`
     public func observe(on queue: DispatchQueue? = nil, with observer: @escaping (State) -> Void) -> Disposable {
@@ -101,7 +103,9 @@ public class Store<State>: ActionDispatcher {
     ///     print(action)
     /// }
     /// ```
-    /// - Parameter observe: this closure will be executed whenever the action happened **after** the state change
+    /// - Parameters:
+    ///   - queue: queue of a subscription. Pass nill to use current queue.
+    ///   - observe: this closure will be executed whenever the action happened **after** the state change
     ///
     /// - Returns: A `Disposable`, to stop observation call .dispose() on it, or add it to a `Disposer`
     public func onAction(
