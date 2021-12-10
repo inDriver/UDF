@@ -15,7 +15,7 @@
 
 import Foundation
 
-struct TestState {
+struct TestState: Equatable {
     var intValue: Int = 0
     var stringValue: String = ""
 }
