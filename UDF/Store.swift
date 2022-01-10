@@ -138,12 +138,23 @@ public class Store<State>: ActionDispatcher {
     ///
     /// - Parameters:
     ///   - reducer: A local reducer.
+    ///   - key: A key for storing the reducer. Use the key for removing the reducer when it's not needed.
+    public func add(reducer: @escaping Reducer<State>, withKey key: String) {
+        storeDispatchQueue.async {
+            self.dynamicReducers[key] = reducer
+        }
+    }
+
+    /// Adds a dynamic reducer to the `Store`.
+    ///
+    /// - Parameters:
+    ///   - reducer: A local reducer.
     ///   - state: A keypath for a `State` of the reducer.
     ///   - key: A key for storing the reducer. Use the key for removing the reducer when it's not needed.
-    public func add<LocalState>(reducer: @escaping Reducer<LocalState>, state keypath: WritableKeyPath<State, LocalState>, withKey key: String) {
+    public func add<LocalState>(reducer: @escaping Reducer<LocalState>, state keyPath: WritableKeyPath<State, LocalState>, withKey key: String) {
         storeDispatchQueue.async {
             self.dynamicReducers[key] = {(state: inout State, action: Action) in
-                reducer(&state[keyPath: keypath], action)
+                reducer(&state[keyPath: keyPath], action)
             }
         }
     }
@@ -163,8 +174,8 @@ public class Store<State>: ActionDispatcher {
     ///
     /// - Parameter keypath: A keypath for a `LocalState`.
     /// - Returns: A `Store` with scoped `State`.
-    public func scope<LocalState>(_ keyPath: KeyPath<State, LocalState>) -> Store<LocalState> {
-        scope { $0[keyPath: keyPath] }
+    public func scope<LocalState>(_ keyPath: WritableKeyPath<State, LocalState>) -> Store<LocalState> {
+        scope(keyPath, shoundUpdateLocalState: { _, _ in true })
     }
 
     /// Scopes the store to a local state.
@@ -172,34 +183,17 @@ public class Store<State>: ActionDispatcher {
     /// - Parameter keypath: A keypath for a `Equatable` `LocalState`.
     ///  if `LocalState` is the same after update, `Store` subscrbers will not be notified.
     /// - Returns: A `Store` with scoped `State`.
-    public func scope<LocalState: Equatable>(_ keyPath: KeyPath<State, LocalState>) -> Store<LocalState> {
-        scope { $0[keyPath: keyPath] }
-    }
-
-    /// Scopes the store to a local state.
-    ///
-    /// - Parameter transform: A function that transforms the `State` into a `LocalState`.
-    /// - Returns: A `Store` with scoped `State`.
-    public func scope<LocalState>(transform: @escaping (State) -> LocalState) -> Store<LocalState> {
-        scope(transform: transform, shoundUpdateLocalState: { _, _ in true })
-    }
-
-    /// Scopes the store to a local state.
-    ///
-    /// - Parameter transform: A function that transforms the `State` into a `LocalState`.
-    ///  if `LocalState` is the same after update, `Store` subscrbers will not be notified.
-    /// - Returns: A `Store` with scoped `State`.
-    public func scope<LocalState: Equatable>(transform: @escaping (State) -> LocalState) -> Store<LocalState> {
-        scope(transform: transform, shoundUpdateLocalState: !=)
+    public func scope<LocalState: Equatable>(_ keyPath: WritableKeyPath<State, LocalState>) -> Store<LocalState> {
+        scope(keyPath, shoundUpdateLocalState: !=)
     }
 
     fileprivate func scope<LocalState>(
-        transform: @escaping (State) -> LocalState,
+        _ keyPath: WritableKeyPath<State, LocalState>,
         shoundUpdateLocalState: @escaping (LocalState, LocalState) -> Bool
     ) -> Store<LocalState> {
         return ProxyStore(
             store: self,
-            transform: transform,
+            keyPath: keyPath,
             shoundUpdateLocalState: shoundUpdateLocalState,
             dispatchQueue: storeDispatchQueue
         )
@@ -212,28 +206,28 @@ public class Store<State>: ActionDispatcher {
 /// It doesn't have its own reducer. ProxyStore just proxy actions to parent store and get `State` update from it.
 class ProxyStore<LocalState, State>: Store<LocalState> {
     private let store: Store<State>
-    private let transform: (State) -> LocalState
+    private let keyPath: WritableKeyPath<State, LocalState>
     private let shoundUpdateLocalState: (LocalState, LocalState) -> Bool
 
     init(
         store: Store<State>,
-        transform: @escaping (State) -> LocalState,
+        keyPath: WritableKeyPath<State, LocalState>,
         shoundUpdateLocalState: @escaping (LocalState, LocalState) -> Bool,
         dispatchQueue: DispatchQueue
     ) {
         self.store = store
-        self.transform = transform
+        self.keyPath = keyPath
         self.shoundUpdateLocalState = shoundUpdateLocalState
-        super.init(state: transform(store.state), reducer: { _, _ in }, dispatchQueue: dispatchQueue)
+        super.init(state: store.state[keyPath: keyPath], reducer: { _, _ in }, dispatchQueue: dispatchQueue)
 
         store.onAction { [weak self] state, action in
             guard let self = self else { return }
-            self.actionsObservers.forEach { $0.notify(with: (transform(state), action)) }
+            self.actionsObservers.forEach { $0.notify(with: (state[keyPath: keyPath], action)) }
         }.dispose(on: disposer)
 
         store.observe { [weak self] state in
             guard let self = self else { return }
-            let newState = transform(state)
+            let newState = state[keyPath: keyPath]
             guard shoundUpdateLocalState(newState, self.state) else { return }
             self.state = newState
             self.stateObservers.forEach { $0.notify(with: newState) }
@@ -247,13 +241,28 @@ class ProxyStore<LocalState, State>: Store<LocalState> {
         }
     }
 
+    public override func add<ReducerState>(
+        reducer: @escaping Reducer<ReducerState>,
+        state keyPath: WritableKeyPath<LocalState, ReducerState>,
+        withKey key: String) {
+            store.add(reducer: reducer, state: self.keyPath.appending(path: keyPath), withKey: key)
+    }
+
+    public override func add(reducer: @escaping Reducer<LocalState>, withKey key: String) {
+        store.add(reducer: reducer, state: keyPath, withKey: key)
+    }
+
+    public override func remove(reducerWithKey key: String) {
+        store.remove(reducerWithKey: key)
+    }
+
     override func scope<ScopeState>(
-        transform: @escaping (LocalState) -> ScopeState,
+        _ keyPath: WritableKeyPath<LocalState, ScopeState>,
         shoundUpdateLocalState: @escaping (ScopeState, ScopeState) -> Bool
     ) -> Store<ScopeState> {
         return ProxyStore<ScopeState, State>(
             store: store,
-            transform: pipe(self.transform, transform),
+            keyPath: self.keyPath.appending(path: keyPath),
             shoundUpdateLocalState: shoundUpdateLocalState,
             dispatchQueue: storeDispatchQueue
         )
