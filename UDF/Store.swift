@@ -175,7 +175,7 @@ public class Store<State>: ActionDispatcher {
     /// - Parameter keypath: A keypath for a `LocalState`.
     /// - Returns: A `Store` with scoped `State`.
     public func scope<LocalState>(_ keyPath: WritableKeyPath<State, LocalState>) -> Store<LocalState> {
-        scope(keyPath, shoundUpdateLocalState: { _, _ in true })
+        scope(keyPath, shouldUpdateLocalState: { _, _ in true })
     }
 
     /// Scopes the store to a local state.
@@ -184,17 +184,17 @@ public class Store<State>: ActionDispatcher {
     ///  if `LocalState` is the same after update, `Store` subscrbers will not be notified.
     /// - Returns: A `Store` with scoped `State`.
     public func scope<LocalState: Equatable>(_ keyPath: WritableKeyPath<State, LocalState>) -> Store<LocalState> {
-        scope(keyPath, shoundUpdateLocalState: !=)
+        scope(keyPath, shouldUpdateLocalState: !=)
     }
 
     fileprivate func scope<LocalState>(
         _ keyPath: WritableKeyPath<State, LocalState>,
-        shoundUpdateLocalState: @escaping (LocalState, LocalState) -> Bool
+        shouldUpdateLocalState: @escaping (LocalState, LocalState) -> Bool
     ) -> Store<LocalState> {
         return ProxyStore(
             store: self,
             keyPath: keyPath,
-            shoundUpdateLocalState: shoundUpdateLocalState,
+            shouldUpdateLocalState: shouldUpdateLocalState,
             dispatchQueue: storeDispatchQueue
         )
     }
@@ -207,17 +207,17 @@ public class Store<State>: ActionDispatcher {
 class ProxyStore<LocalState, State>: Store<LocalState> {
     private let store: Store<State>
     private let keyPath: WritableKeyPath<State, LocalState>
-    private let shoundUpdateLocalState: (LocalState, LocalState) -> Bool
+    private let shouldUpdateLocalState: (LocalState, LocalState) -> Bool
 
     init(
         store: Store<State>,
         keyPath: WritableKeyPath<State, LocalState>,
-        shoundUpdateLocalState: @escaping (LocalState, LocalState) -> Bool,
+        shouldUpdateLocalState: @escaping (LocalState, LocalState) -> Bool,
         dispatchQueue: DispatchQueue
     ) {
         self.store = store
         self.keyPath = keyPath
-        self.shoundUpdateLocalState = shoundUpdateLocalState
+        self.shouldUpdateLocalState = shouldUpdateLocalState
         super.init(state: store.state[keyPath: keyPath], reducer: { _, _ in }, dispatchQueue: dispatchQueue)
 
         store.onAction { [weak self] state, action in
@@ -228,7 +228,7 @@ class ProxyStore<LocalState, State>: Store<LocalState> {
         store.observe { [weak self] state in
             guard let self = self else { return }
             let newState = state[keyPath: keyPath]
-            guard shoundUpdateLocalState(newState, self.state) else { return }
+            guard shouldUpdateLocalState(newState, self.state) else { return }
             self.state = newState
             self.stateObservers.forEach { $0.notify(with: newState) }
 
@@ -258,12 +258,12 @@ class ProxyStore<LocalState, State>: Store<LocalState> {
 
     override func scope<ScopeState>(
         _ keyPath: WritableKeyPath<LocalState, ScopeState>,
-        shoundUpdateLocalState: @escaping (ScopeState, ScopeState) -> Bool
+        shouldUpdateLocalState: @escaping (ScopeState, ScopeState) -> Bool
     ) -> Store<ScopeState> {
         return ProxyStore<ScopeState, State>(
             store: store,
             keyPath: self.keyPath.appending(path: keyPath),
-            shoundUpdateLocalState: shoundUpdateLocalState,
+            shouldUpdateLocalState: shouldUpdateLocalState,
             dispatchQueue: storeDispatchQueue
         )
     }
