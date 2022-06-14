@@ -19,13 +19,11 @@ class StoreScopeTests: XCTestCase {
     struct TestState: Equatable {
         var localState: Int
         var otherLocalState: String
+        var computedState: Int {
+            localState
+        }
     }
-
-    struct ComplextTestState: Equatable {
-        var testState: TestState
-        var otherState: Double
-    }
-
+    
     let disposer = Disposer()
     struct FakeAction: Action { }
 
@@ -44,7 +42,7 @@ class StoreScopeTests: XCTestCase {
         let store = Store(state: initState, reducer: emptyReducer)
         var localState: Int?
         let expectation = self.expectation(description: #function)
-        let localStore = store.scope(\.localState)
+        let localStore = store.scope(\.computedState)
 
         // when
         localStore.observe {
@@ -66,7 +64,7 @@ class StoreScopeTests: XCTestCase {
         let store = Store(state: initState, reducer: reducer)
         var localStates = [Int]()
         let expectation = self.expectation(description: #function)
-        let localStore = store.scope(\.localState)
+        let localStore = store.scope(\.computedState)
 
         // when
         localStore.observe {
@@ -88,7 +86,7 @@ class StoreScopeTests: XCTestCase {
         var state: Int?
         var action: Action?
         let expectation = self.expectation(description: #function)
-        let localStore = store.scope(\.localState)
+        let localStore = store.scope(\.computedState)
 
         // when
         localStore.onAction {
@@ -114,7 +112,7 @@ class StoreScopeTests: XCTestCase {
         var state: Int?
         var action: Action?
         let expectation = self.expectation(description: #function)
-        let localStore = store.scope(\.localState)
+        let localStore = store.scope(\.computedState)
 
         // when
         localStore.onAction {
@@ -140,7 +138,7 @@ class StoreScopeTests: XCTestCase {
         let store = Store(state: initState, reducer: reducer)
         var globalStates = [TestState]()
         let expectation = self.expectation(description: #function)
-        let localStore = store.scope(\.localState)
+        let localStore = store.scope(\.computedState)
 
         // when
         store.observe {
@@ -162,7 +160,7 @@ class StoreScopeTests: XCTestCase {
         var state: TestState?
         var action: Action?
         let expectation = self.expectation(description: #function)
-        let localStore = store.scope(\.localState)
+        let localStore = store.scope(\.computedState)
 
         // when
         store.onAction {
@@ -187,7 +185,7 @@ class StoreScopeTests: XCTestCase {
         let store = Store(state: initState, reducer: reducer)
         var localStates = [Int]()
         let expectation = self.expectation(description: #function)
-        let localStore = store.scope(\.localState)
+        let localStore = store.scope(\.computedState)
 
         // when
         localStore.observe {
@@ -199,156 +197,5 @@ class StoreScopeTests: XCTestCase {
         // then
         waitForExpectations(timeout: 0.1, handler: nil)
         XCTAssertEqual(localStates, [1])
-    }
-
-    func testAddReducerForScopeStore() {
-        // given
-        let initState = ComplextTestState(testState: .init(localState: 1, otherLocalState: "test"), otherState: 0)
-        let exp = expectation(description: "dynamicReducer is called")
-
-        func reduce(_ state: inout ComplextTestState, _: Action) {
-        }
-
-        func dynamicReducer(_ state: inout TestState, _: Action) {
-            state.localState = 2
-        }
-
-        let store = Store(state: initState, reducer: reduce)
-        let localStore = store.scope(\.testState)
-
-        // when
-        localStore.add(reducer: dynamicReducer, withKey: "key")
-        localStore.dispatch(FakeAction())
-
-        localStore.observe { value in
-            if value.localState == 2 {
-                exp.fulfill()
-            } else {
-                XCTFail("dynamicReducer is not called")
-            }
-        }.dispose(on: disposer)
-
-
-        // then
-        wait(for: [exp], timeout: 0.5)
-    }
-
-    func testAddReducerLocalStateForScopeStore() {
-        // given
-        let initState = ComplextTestState(testState: .init(localState: 1, otherLocalState: "test"), otherState: 0)
-        let exp = expectation(description: "dynamicReducer is called")
-
-        func reduce(_ state: inout ComplextTestState, _: Action) {
-        }
-
-        func dynamicReducer(_ state: inout Int, _: Action) {
-            state = 2
-        }
-
-        let store = Store(state: initState, reducer: reduce)
-        let localStore = store.scope(\.testState)
-
-        // when
-        localStore.add(reducer: dynamicReducer, state: \.localState, withKey: "key")
-        localStore.dispatch(FakeAction())
-
-        localStore.observe { value in
-            if value.localState == 2 {
-                exp.fulfill()
-            } else {
-                XCTFail("dynamicReducer is not called")
-            }
-        }.dispose(on: disposer)
-
-
-        // then
-        wait(for: [exp], timeout: 0.5)
-    }
-
-    func testReplaceReducerForScopeStore() {
-        // given
-        let initLocalState = TestState(localState: 1, otherLocalState: "")
-        let initState = ComplextTestState(testState: initLocalState, otherState: 0)
-        let exp = expectation(description: "dynamicReducer is called")
-        let expectedStateSequence: [TestState] = [
-            initLocalState,
-            .init(localState: 2, otherLocalState: ""),
-            .init(localState: 2, otherLocalState: "!")]
-
-        func reduce(_ state: inout ComplextTestState, _: Action) {
-        }
-
-        func originalDynamicReducer(_ state: inout Int, _: Action) {
-            state += 1
-        }
-
-        func replacedDynamicReducer(_ state: inout String, _: Action) {
-            state += "!"
-        }
-
-        var result = [TestState]()
-        let store = Store(state: initState, reducer: reduce)
-        let localStore = store.scope(\.testState)
-
-        // when
-        localStore.observe { value in
-            result.append(value)
-            guard result.count == expectedStateSequence.count else { return }
-            if result == expectedStateSequence {
-                exp.fulfill()
-            } else {
-                XCTFail("result is not equal expectedState: \(result) != \(expectedStateSequence)")
-            }
-        }.dispose(on: disposer)
-
-        localStore.add(reducer: originalDynamicReducer, state: \.localState, withKey: "key")
-        localStore.dispatch(FakeAction())
-        localStore.add(reducer: replacedDynamicReducer, state: \.otherLocalState, withKey: "key")
-        localStore.dispatch(FakeAction())
-
-        // then
-        wait(for: [exp], timeout: 0.5)
-    }
-
-    func testRemoveReducerForScopeStore() {
-        // given
-        let initLocalState = TestState(localState: 1, otherLocalState: "")
-        let initState = ComplextTestState(testState: initLocalState, otherState: 0)
-        let exp = expectation(description: "dynamicReducer is called")
-        let expectedStateSequence: [TestState] = [
-            initLocalState,
-            .init(localState: 2, otherLocalState: "!"),
-            .init(localState: 2, otherLocalState: "!!")]
-
-        func reduce(_ state: inout ComplextTestState, _: Action) {
-            state.testState.otherLocalState = state.testState.otherLocalState + "!"
-        }
-
-        func dynamicReducer(_ state: inout Int, _: Action) {
-            state = state + 1
-        }
-
-        var result = [TestState]()
-        let store = Store(state: initState, reducer: reduce)
-        let localStore = store.scope(\.testState)
-
-        // when
-        localStore.observe { value in
-            result.append(value)
-            guard result.count == expectedStateSequence.count else { return }
-            if result == expectedStateSequence {
-                exp.fulfill()
-            } else {
-                XCTFail("result is not equal expectedState: \(result) != \(expectedStateSequence)")
-            }
-        }.dispose(on: disposer)
-
-        localStore.add(reducer: dynamicReducer, state: \.localState, withKey: "key")
-        localStore.dispatch(FakeAction())
-        localStore.remove(reducerWithKey: "key")
-        localStore.dispatch(FakeAction())
-
-        // then
-        wait(for: [exp], timeout: 0.5)
     }
 }
