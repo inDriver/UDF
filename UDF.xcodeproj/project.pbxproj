@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		7D1847E72747DE510027823F /* Propsable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D1847E62747DE500027823F /* Propsable.swift */; };
+		7D1F79D5285383C8001271A1 /* StoreWritableScopeScopeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D1F79D4285383C8001271A1 /* StoreWritableScopeScopeTests.swift */; };
+		7D408D20284F98E100531DAE /* StoreWritableScopeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D408D1F284F98E100531DAE /* StoreWritableScopeTests.swift */; };
 		7D8020FA27266F6C0088B46D /* ActionListenerConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8020F927266F6C0088B46D /* ActionListenerConnector.swift */; };
 		7D8020FC27266FDF0088B46D /* ClosureActionListenerConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8020FB27266FDF0088B46D /* ClosureActionListenerConnector.swift */; };
 		7D8020FE2726700E0088B46D /* ServiceActionListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8020FD2726700E0088B46D /* ServiceActionListener.swift */; };
@@ -15,10 +17,17 @@
 		7D802102272682420088B46D /* ClosureConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D802101272682420088B46D /* ClosureConnector.swift */; };
 		7D802104272682E70088B46D /* FakeActionListenerConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D802103272682E70088B46D /* FakeActionListenerConnector.swift */; };
 		7D8021062726834A0088B46D /* FakeActionListenerAndConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8021052726834A0088B46D /* FakeActionListenerAndConnector.swift */; };
+		7D9BA2FB284A50430059BEB7 /* WritableProxyStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D9BA2FA284A50430059BEB7 /* WritableProxyStore.swift */; };
+		7D9BA2FE284A5A480059BEB7 /* WritableScopeProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D9BA2FD284A5A480059BEB7 /* WritableScopeProtocol.swift */; };
+		7D9BA300284A5E850059BEB7 /* PublisherProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D9BA2FF284A5E850059BEB7 /* PublisherProtocol.swift */; };
+		7D9BA302284CE8210059BEB7 /* DynamicReducerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D9BA301284CE8210059BEB7 /* DynamicReducerProtocol.swift */; };
+		7D9BA304284CE8B90059BEB7 /* StoreProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D9BA303284CE8B90059BEB7 /* StoreProtocol.swift */; };
+		7D9BA308284D2FFF0059BEB7 /* ScopeProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D9BA307284D2FFF0059BEB7 /* ScopeProtocol.swift */; };
+		7D9BA30A284D303C0059BEB7 /* ProxyStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D9BA309284D303C0059BEB7 /* ProxyStore.swift */; };
+		7DC03D532850ED0000359CA0 /* StoreDoubleWritableScopeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DC03D522850ED0000359CA0 /* StoreDoubleWritableScopeTests.swift */; };
 		9E45E1862694A640003B0321 /* Subscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E45E17C2694A640003B0321 /* Subscription.swift */; };
 		9E45E1882694A640003B0321 /* ActionDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E45E17E2694A640003B0321 /* ActionDispatcher.swift */; };
 		9E45E18A2694A640003B0321 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E45E1802694A640003B0321 /* Store.swift */; };
-		9E45E18B2694A640003B0321 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E45E1812694A640003B0321 /* Utils.swift */; };
 		9E45E18C2694A640003B0321 /* Reducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E45E1822694A640003B0321 /* Reducer.swift */; };
 		9E45E18D2694A640003B0321 /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E45E1832694A640003B0321 /* Action.swift */; };
 		9E45E18F2694A640003B0321 /* Disposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E45E1852694A640003B0321 /* Disposer.swift */; };
@@ -56,6 +65,8 @@
 
 /* Begin PBXFileReference section */
 		7D1847E62747DE500027823F /* Propsable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Propsable.swift; sourceTree = "<group>"; };
+		7D1F79D4285383C8001271A1 /* StoreWritableScopeScopeTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoreWritableScopeScopeTests.swift; sourceTree = "<group>"; };
+		7D408D1F284F98E100531DAE /* StoreWritableScopeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreWritableScopeTests.swift; sourceTree = "<group>"; };
 		7D8020F927266F6C0088B46D /* ActionListenerConnector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionListenerConnector.swift; sourceTree = "<group>"; };
 		7D8020FB27266FDF0088B46D /* ClosureActionListenerConnector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClosureActionListenerConnector.swift; sourceTree = "<group>"; };
 		7D8020FD2726700E0088B46D /* ServiceActionListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceActionListener.swift; sourceTree = "<group>"; };
@@ -63,10 +74,17 @@
 		7D802101272682420088B46D /* ClosureConnector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClosureConnector.swift; sourceTree = "<group>"; };
 		7D802103272682E70088B46D /* FakeActionListenerConnector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeActionListenerConnector.swift; sourceTree = "<group>"; };
 		7D8021052726834A0088B46D /* FakeActionListenerAndConnector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeActionListenerAndConnector.swift; sourceTree = "<group>"; };
+		7D9BA2FA284A50430059BEB7 /* WritableProxyStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WritableProxyStore.swift; sourceTree = "<group>"; };
+		7D9BA2FD284A5A480059BEB7 /* WritableScopeProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WritableScopeProtocol.swift; sourceTree = "<group>"; };
+		7D9BA2FF284A5E850059BEB7 /* PublisherProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublisherProtocol.swift; sourceTree = "<group>"; };
+		7D9BA301284CE8210059BEB7 /* DynamicReducerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicReducerProtocol.swift; sourceTree = "<group>"; };
+		7D9BA303284CE8B90059BEB7 /* StoreProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreProtocol.swift; sourceTree = "<group>"; };
+		7D9BA307284D2FFF0059BEB7 /* ScopeProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScopeProtocol.swift; sourceTree = "<group>"; };
+		7D9BA309284D303C0059BEB7 /* ProxyStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyStore.swift; sourceTree = "<group>"; };
+		7DC03D522850ED0000359CA0 /* StoreDoubleWritableScopeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreDoubleWritableScopeTests.swift; sourceTree = "<group>"; };
 		9E45E17C2694A640003B0321 /* Subscription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Subscription.swift; sourceTree = "<group>"; };
 		9E45E17E2694A640003B0321 /* ActionDispatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActionDispatcher.swift; sourceTree = "<group>"; };
 		9E45E1802694A640003B0321 /* Store.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
-		9E45E1812694A640003B0321 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		9E45E1822694A640003B0321 /* Reducer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reducer.swift; sourceTree = "<group>"; };
 		9E45E1832694A640003B0321 /* Action.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Action.swift; sourceTree = "<group>"; };
 		9E45E1852694A640003B0321 /* Disposer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Disposer.swift; sourceTree = "<group>"; };
@@ -121,6 +139,30 @@
 				7D8020FB27266FDF0088B46D /* ClosureActionListenerConnector.swift */,
 			);
 			path = Connector;
+			sourceTree = "<group>";
+		};
+		7D9BA2F9284A50100059BEB7 /* Store */ = {
+			isa = PBXGroup;
+			children = (
+				7D9BA2FC284A5A2C0059BEB7 /* Protocols */,
+				9E45E1802694A640003B0321 /* Store.swift */,
+				7D9BA2FA284A50430059BEB7 /* WritableProxyStore.swift */,
+				7D9BA309284D303C0059BEB7 /* ProxyStore.swift */,
+			);
+			path = Store;
+			sourceTree = "<group>";
+		};
+		7D9BA2FC284A5A2C0059BEB7 /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				9E45E17E2694A640003B0321 /* ActionDispatcher.swift */,
+				7D9BA307284D2FFF0059BEB7 /* ScopeProtocol.swift */,
+				7D9BA2FD284A5A480059BEB7 /* WritableScopeProtocol.swift */,
+				7D9BA2FF284A5E850059BEB7 /* PublisherProtocol.swift */,
+				7D9BA301284CE8210059BEB7 /* DynamicReducerProtocol.swift */,
+				7D9BA303284CE8B90059BEB7 /* StoreProtocol.swift */,
+			);
+			path = Protocols;
 			sourceTree = "<group>";
 		};
 		9E45E1AB2694A701003B0321 /* Connector */ = {
@@ -194,13 +236,11 @@
 				9E45E1AE2694A701003B0321 /* ActionListener */,
 				9E45E1B02694A701003B0321 /* Component */,
 				9E45E1AB2694A701003B0321 /* Connector */,
+				7D9BA2F9284A50100059BEB7 /* Store */,
 				9E45E1832694A640003B0321 /* Action.swift */,
-				9E45E17E2694A640003B0321 /* ActionDispatcher.swift */,
 				9E45E1852694A640003B0321 /* Disposer.swift */,
 				9E45E1822694A640003B0321 /* Reducer.swift */,
-				9E45E1802694A640003B0321 /* Store.swift */,
 				9E45E17C2694A640003B0321 /* Subscription.swift */,
-				9E45E1812694A640003B0321 /* Utils.swift */,
 				9EBAC3EA2694A5CC008EDFD5 /* UDF.h */,
 				9EBAC3EB2694A5CC008EDFD5 /* Info.plist */,
 			);
@@ -215,7 +255,10 @@
 				9E45E1942694A647003B0321 /* ComponentTests.swift */,
 				9E45E19A2694A647003B0321 /* DisposerTests.swift */,
 				9E45E1982694A647003B0321 /* StoreBasicTests.swift */,
+				7D1F79D4285383C8001271A1 /* StoreWritableScopeScopeTests.swift */,
 				9E45E1992694A647003B0321 /* StoreDoubleScopeTests.swift */,
+				7DC03D522850ED0000359CA0 /* StoreDoubleWritableScopeTests.swift */,
+				7D408D1F284F98E100531DAE /* StoreWritableScopeTests.swift */,
 				9E45E1962694A647003B0321 /* StoreScopeTests.swift */,
 				9EBAC3F72694A5CC008EDFD5 /* Info.plist */,
 			);
@@ -333,12 +376,17 @@
 			files = (
 				9E45E18A2694A640003B0321 /* Store.swift in Sources */,
 				7D802102272682420088B46D /* ClosureConnector.swift in Sources */,
+				7D9BA308284D2FFF0059BEB7 /* ScopeProtocol.swift in Sources */,
 				9E45E1B62694A701003B0321 /* ActionListener.swift in Sources */,
 				9E45E18D2694A640003B0321 /* Action.swift in Sources */,
+				7D9BA302284CE8210059BEB7 /* DynamicReducerProtocol.swift in Sources */,
 				9E45E1882694A640003B0321 /* ActionDispatcher.swift in Sources */,
 				9E45E1B72694A701003B0321 /* Component.swift in Sources */,
+				7D9BA300284A5E850059BEB7 /* PublisherProtocol.swift in Sources */,
 				9E45E1862694A640003B0321 /* Subscription.swift in Sources */,
 				9E45E1B52694A701003B0321 /* Mapper.swift in Sources */,
+				7D9BA2FE284A5A480059BEB7 /* WritableScopeProtocol.swift in Sources */,
+				7D9BA2FB284A50430059BEB7 /* WritableProxyStore.swift in Sources */,
 				9E45E18F2694A640003B0321 /* Disposer.swift in Sources */,
 				9E45E1B82694A701003B0321 /* ViewComponent.swift in Sources */,
 				9E45E1B42694A701003B0321 /* Connector.swift in Sources */,
@@ -346,8 +394,9 @@
 				7D8020FE2726700E0088B46D /* ServiceActionListener.swift in Sources */,
 				7D8020FC27266FDF0088B46D /* ClosureActionListenerConnector.swift in Sources */,
 				7D1847E72747DE510027823F /* Propsable.swift in Sources */,
-				9E45E18B2694A640003B0321 /* Utils.swift in Sources */,
 				9E45E1B92694A701003B0321 /* ServiceComponent.swift in Sources */,
+				7D9BA30A284D303C0059BEB7 /* ProxyStore.swift in Sources */,
+				7D9BA304284CE8B90059BEB7 /* StoreProtocol.swift in Sources */,
 				7D802100272670370088B46D /* ViewActionListener.swift in Sources */,
 				7D8020FA27266F6C0088B46D /* ActionListenerConnector.swift in Sources */,
 			);
@@ -361,6 +410,9 @@
 				9E45E1A02694A647003B0321 /* StoreDoubleScopeTests.swift in Sources */,
 				7D802104272682E70088B46D /* FakeActionListenerConnector.swift in Sources */,
 				9E45E19B2694A647003B0321 /* ComponentTests.swift in Sources */,
+				7D408D20284F98E100531DAE /* StoreWritableScopeTests.swift in Sources */,
+				7D1F79D5285383C8001271A1 /* StoreWritableScopeScopeTests.swift in Sources */,
+				7DC03D532850ED0000359CA0 /* StoreDoubleWritableScopeTests.swift in Sources */,
 				9E45E19D2694A647003B0321 /* StoreScopeTests.swift in Sources */,
 				9E45E1C52694A713003B0321 /* FakeComponentConnector.swift in Sources */,
 				9E45E1C92694A713003B0321 /* FakeActionListener.swift in Sources */,
