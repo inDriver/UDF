@@ -45,7 +45,7 @@ public protocol PublisherProtocol: AnyObject {
     func onAction(on queue: DispatchQueue?, with observer: @escaping (State, Action) -> Void) -> Disposable
 }
 
-extension PublisherProtocol {
+public extension PublisherProtocol {
 
     func observe(on queue: DispatchQueue? = nil, with observer: @escaping (State) -> Void) -> Disposable {
         observe(on: queue, with: observer)
