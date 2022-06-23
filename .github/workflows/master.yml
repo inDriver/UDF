@@ -19,7 +19,7 @@ on:
 jobs:
   build:
     name: develop build
-    runs-on: [self-hosted, xcode12]
+    runs-on: macos-latest
     timeout-minutes: 90
     env:
       LC_ALL: en_US.UTF-8
