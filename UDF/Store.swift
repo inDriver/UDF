@@ -199,7 +199,8 @@ class ProxyStore<LocalState, State>: Store<LocalState> {
 
         store.onAction { [weak self] state, action in
             guard let self = self else { return }
-            self.actionsObservers.forEach { $0.notify(with: (transform(state), action)) }
+            let newState = transform(state)
+            self.actionsObservers.forEach { $0.notify(with: (newState, action)) }
         }.dispose(on: disposer)
 
         store.observe { [weak self] state in
