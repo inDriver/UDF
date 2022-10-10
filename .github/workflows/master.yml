@@ -19,6 +19,7 @@ on:
 jobs:
   build:
     name: develop build
+    # Image description https://github.com/actions/runner-images/blob/main/images/macos/macos-11-Readme.md
     runs-on: macos-11
     timeout-minutes: 90
     env:
@@ -29,6 +30,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Build
         run: xcodebuild -project UDF.xcodeproj
-      - run: xcodebuild -showsdks
+      - name: Show SDK
+        # For available image environment showcase
+        run: xcodebuild -showsdks
       - name: Test
         run: xcodebuild test -project UDF.xcodeproj -scheme UDF -destination 'platform=iOS Simulator,name=iPhone 11,OS=15.2'
