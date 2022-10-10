@@ -19,9 +19,11 @@ class StoreScopeTests: XCTestCase {
     struct TestState: Equatable {
         var localState: Int
         var otherLocalState: String
+        var computedState: Int {
+            localState
+        }
     }
-
-    var store: Store<TestState>!
+    
     let disposer = Disposer()
     struct FakeAction: Action { }
 
@@ -37,10 +39,10 @@ class StoreScopeTests: XCTestCase {
         // given
         let initState = TestState(localState: 1, otherLocalState: "test")
         func emptyReducer(state _: inout TestState, with _: Action) { }
-        store = Store(state: initState, reducer: emptyReducer)
+        let store = Store(state: initState, reducer: emptyReducer)
         var localState: Int?
         let expectation = self.expectation(description: #function)
-        let localStore = store.scope(\.localState)
+        let localStore = store.scope(\.computedState)
 
         // when
         localStore.observe {
@@ -59,10 +61,10 @@ class StoreScopeTests: XCTestCase {
         func reducer(state: inout TestState, with _: Action) {
             state.localState = 42
         }
-        store = Store(state: initState, reducer: reducer)
+        let store = Store(state: initState, reducer: reducer)
         var localStates = [Int]()
         let expectation = self.expectation(description: #function)
-        let localStore = store.scope(\.localState)
+        let localStore = store.scope(\.computedState)
 
         // when
         localStore.observe {
@@ -80,11 +82,11 @@ class StoreScopeTests: XCTestCase {
         // given
         let initState = TestState(localState: 1, otherLocalState: "test")
         func emptyReducer(state _: inout TestState, with _: Action) { }
-        store = Store(state: initState, reducer: emptyReducer)
+        let store = Store(state: initState, reducer: emptyReducer)
         var state: Int?
         var action: Action?
         let expectation = self.expectation(description: #function)
-        let localStore = store.scope(\.localState)
+        let localStore = store.scope(\.computedState)
 
         // when
         localStore.onAction {
@@ -106,11 +108,11 @@ class StoreScopeTests: XCTestCase {
         func reducer(state: inout TestState, with _: Action) {
             state.localState = 42
         }
-        store = Store(state: initState, reducer: reducer)
+        let store = Store(state: initState, reducer: reducer)
         var state: Int?
         var action: Action?
         let expectation = self.expectation(description: #function)
-        let localStore = store.scope(\.localState)
+        let localStore = store.scope(\.computedState)
 
         // when
         localStore.onAction {
@@ -133,10 +135,10 @@ class StoreScopeTests: XCTestCase {
         func reducer(state: inout TestState, with _: Action) {
             state.localState = 42
         }
-        store = Store(state: initState, reducer: reducer)
+        let store = Store(state: initState, reducer: reducer)
         var globalStates = [TestState]()
         let expectation = self.expectation(description: #function)
-        let localStore = store.scope(\.localState)
+        let localStore = store.scope(\.computedState)
 
         // when
         store.observe {
@@ -154,11 +156,11 @@ class StoreScopeTests: XCTestCase {
         // given
         let initState = TestState(localState: 1, otherLocalState: "test")
         func emptyReducer(state _: inout TestState, with _: Action) { }
-        store = Store(state: initState, reducer: emptyReducer)
+        let store = Store(state: initState, reducer: emptyReducer)
         var state: TestState?
         var action: Action?
         let expectation = self.expectation(description: #function)
-        let localStore = store.scope(\.localState)
+        let localStore = store.scope(\.computedState)
 
         // when
         store.onAction {
@@ -180,10 +182,10 @@ class StoreScopeTests: XCTestCase {
         func reducer(state: inout TestState, with _: Action) {
             state.otherLocalState = "42"
         }
-        store = Store(state: initState, reducer: reducer)
+        let store = Store(state: initState, reducer: reducer)
         var localStates = [Int]()
         let expectation = self.expectation(description: #function)
-        let localStore = store.scope(\.localState)
+        let localStore = store.scope(\.computedState)
 
         // when
         localStore.observe {

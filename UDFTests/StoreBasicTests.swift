@@ -21,8 +21,6 @@ class StoreBasicTests: XCTestCase {
 
     let disposer = Disposer()
 
-    // MARK: Components
-
     func testComponentSubscribedAndReceivesCurrentState() {
         // given
         let exp = expectation(description: "state is right")
@@ -94,6 +92,150 @@ class StoreBasicTests: XCTestCase {
 
         }.dispose(on: disposer)
 
+        sut.dispatch(FakeAction())
+
+        // then
+        wait(for: [exp], timeout: 0.5)
+    }
+
+    func testAddReducer() {
+        // given
+        let initState = TestState(intValue: 1, stringValue: "")
+        let exp = expectation(description: "dynamicReducer is called")
+
+        func reduce(_ state: inout TestState, _: Action) {
+        }
+
+        func dynamicReducer(_ state: inout TestState, _: Action) {
+            state.intValue = 2
+        }
+
+        let sut = Store(state: initState, reducer: reduce)
+
+        // when
+        sut.add(reducer: dynamicReducer, withKey: "key")
+        sut.dispatch(FakeAction())
+
+        sut.observe { value in
+            if value.intValue == 2 {
+                exp.fulfill()
+            } else {
+                XCTFail("dynamicReducer is not called")
+            }
+        }.dispose(on: disposer)
+
+
+        // then
+        wait(for: [exp], timeout: 0.5)
+    }
+
+    func testAddReducerLocalState() {
+        // given
+        let initState = TestState(intValue: 1, stringValue: "")
+        let exp = expectation(description: "dynamicReducer is called")
+
+        func reduce(_ state: inout TestState, _: Action) {
+        }
+
+        func dynamicReducer(_ state: inout Int, _: Action) {
+            state = 2
+        }
+
+        let sut = Store(state: initState, reducer: reduce)
+
+        // when
+        sut.add(reducer: dynamicReducer, state: \.intValue, withKey: "key")
+        sut.dispatch(FakeAction())
+
+        sut.observe { value in
+            if value.intValue == 2 {
+                exp.fulfill()
+            } else {
+                XCTFail("dynamicReducer is not called")
+            }
+        }.dispose(on: disposer)
+
+
+        // then
+        wait(for: [exp], timeout: 0.5)
+    }
+
+    func testReplaceReducer() {
+        // given
+        let initState = TestState(intValue: 1, stringValue: "")
+        let exp = expectation(description: "dynamicReducer is called")
+        let expectedStateSequence: [TestState] = [
+            initState,
+            .init(intValue: 2, stringValue: ""),
+            .init(intValue: 2, stringValue: "!")]
+
+        func reduce(_ state: inout TestState, _: Action) {
+        }
+
+        func originalDynamicReducer(_ state: inout Int, _: Action) {
+            state += 1
+        }
+
+        func replacedDynamicReducer(_ state: inout String, _: Action) {
+            state += "!"
+        }
+
+        var result = [TestState]()
+        let sut = Store(state: initState, reducer: reduce)
+
+        // when
+        sut.observe { value in
+            result.append(value)
+            guard result.count == expectedStateSequence.count else { return }
+            if result == expectedStateSequence {
+                exp.fulfill()
+            } else {
+                XCTFail("result is not equal expectedState: \(result) != \(expectedStateSequence)")
+            }
+        }.dispose(on: disposer)
+
+        sut.add(reducer: originalDynamicReducer, state: \.intValue, withKey: "key")
+        sut.dispatch(FakeAction())
+        sut.add(reducer: replacedDynamicReducer, state: \.stringValue, withKey: "key")
+        sut.dispatch(FakeAction())
+
+        // then
+        wait(for: [exp], timeout: 0.5)
+    }
+
+    func testRemoveReducer() {
+        // given
+        let initState = TestState(intValue: 1, stringValue: "")
+        let exp = expectation(description: "dynamicReducer is called")
+        let expectedStateSequence: [TestState] = [
+            initState,
+            .init(intValue: 2, stringValue: ""),
+            .init(intValue: 2, stringValue: "")]
+
+        func reduce(_ state: inout TestState, _: Action) {
+        }
+
+        func dynamicReducer(_ state: inout Int, _: Action) {
+            state = state + 1
+        }
+
+        var result = [TestState]()
+        let sut = Store(state: initState, reducer: reduce)
+
+        // when
+        sut.observe { value in
+            result.append(value)
+            guard result.count == expectedStateSequence.count else { return }
+            if result == expectedStateSequence {
+                exp.fulfill()
+            } else {
+                XCTFail("result is not equal expectedState: \(result) != \(expectedStateSequence)")
+            }
+        }.dispose(on: disposer)
+
+        sut.add(reducer: dynamicReducer, state: \.intValue, withKey: "key")
+        sut.dispatch(FakeAction())
+        sut.remove(reducerWithKey: "key")
         sut.dispatch(FakeAction())
 
         // then
