@@ -15,19 +15,16 @@
 import Foundation
 
 /// Parent protocol for components. Use ``ViewComponent`` or ``ServiceComponent`` for your component.
-public protocol Component: AnyObject {
-
-    associatedtype Props: Equatable
+public protocol Component: Propsable {
 
     var queue: DispatchQueue { get }
-    var props: Props { get set }
     var disposer: Disposer { get }
 
     /// Connects a component to a store using a connector.
     ///
     /// - Parameters:
     ///   - store: A `Store` to connect to.
-    ///   - by: A `Connector` that transforms State to Props.
+    ///   - connector: A `Connector` that transforms State to Props.
     ///   - transform: A closure that transforms the `Store`'s `State` to a `State` of the `Connector`.
     func connect<State, ConnectorType: Connector>(
         to store: Store<State>,
@@ -38,7 +35,7 @@ public protocol Component: AnyObject {
 
 public extension Component {
 
-    /// Connects a component to a store when Component`'s `Props` is equal to `Store`'s `State`.
+    /// Connects a component to a store when the `Component`'s `Props` is equal to `Store`'s `State`.
     ///
     /// - Parameters:
     ///   - store: A `Store` to connect to.
@@ -50,7 +47,7 @@ public extension Component {
     ///
     /// - Parameters:
     ///   - store: A `Store` to connect to.
-    ///   - by: A `Connector` that transforms State to Props.
+    ///   - connector: A `Connector` that transforms State to Props.
     func connect<State, ConnectorType: Connector>(
         to store: Store<State>,
         by connector: ConnectorType
@@ -62,7 +59,7 @@ public extension Component {
     ///
     /// - Parameters:
     ///   - store: A `Store` to connect to.
-    ///   - by: A `Connector` that transforms State to Props.
+    ///   - connector: A `Connector` that transforms State to Props.
     ///   - keypath: A keypath for a `State` of the `Component`.
     func connect<State, ConnectorType: Connector>(
         to store: Store<State>,
