@@ -12,7 +12,7 @@ A unidirectional data flow is a design pattern where a state (data) flows down a
 <img width="312" src="https://user-images.githubusercontent.com/739803/124285921-17a10b80-db57-11eb-8f9b-efa84522e650.png" alt="UDF">
  </p>
  
- Unidirectional Data Flow design pattern has been popular for a long time in the web development. Now it's time for the mobile development. Having started from multi-platform solutions like React Native and Flutter, Unidirectional Data Flow now becomes a part of native. [SwiftUI](https://developer.apple.com/documentation/swiftui/state-and-data-flow) for Swift and [Jetpack Compose](https://developer.android.com/jetpack/compose/architecture#udf) for Kotlin are implemented based on ideas of UDF. That's why we in inDriver decided to develop our own UDF library for our purposes.
+ Unidirectional Data Flow design pattern has been popular for a long time in the web development. Now it's time for the mobile development. Having started from multi-platform solutions like React Native and Flutter, Unidirectional Data Flow now becomes a part of native. [SwiftUI](https://developer.apple.com/documentation/swiftui/model-data) for Swift and [Jetpack Compose](https://developer.android.com/jetpack/compose/architecture#udf) for Kotlin are implemented based on ideas of UDF. That's why we in inDriver decided to develop our own UDF library for our purposes.
  
  ## Advantages
  Here are the main advantages of this UDF implementation:
@@ -146,12 +146,12 @@ Now you can move your features to separate frameworks and use them wherever you 
 You can add the UDF to an Xcode project by adding it as a package dependency.
 
 1. Open File › Swift Packages › Add Package Dependency…
-2. Enter "https://github.com/inDriver/UDF"
+2. Enter `https://github.com/inDriver/UDF`
 3. Choose the last version
  
  ## Inspiration & Acknowledgments
  
- The UDF idea is based on [Alexey Demedetskiy](https://github.com/AlexeyDemedetskiy) ideas and [MaximBazarov](https://github.com/MaximBazarov) implementation of Unidirection Data Flow Pattern. Originally the UDF was a fork of [Unicore](https://github.com/Unicore/Unicore).
+ The UDF idea is based on [Alexey Demedetskiy](https://github.com/AlexeyDemedetskiy) ideas and [MaximBazarov](https://github.com/MaximBazarov) implementation of Unidirection Data Flow Pattern. Originally the UDF was a fork of [Unicore](https://github.com/MaximBazarov/Unicore).
  
  [The Composable Architecture](https://github.com/pointfreeco/swift-composable-architecture) inspired our implementation of a scope function and modularisation.
 
