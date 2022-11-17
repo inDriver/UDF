@@ -13,10 +13,19 @@
 //  limitations under the License.
 //
 
-@testable import UDF
+struct CombineSideEffect: SideEffectProtocol {
 
-struct FakeAction: Action {}
+    let effects: [SideEffect]
 
-struct OtherFakeAction: Action {}
+    init(effects: [SideEffect]) {
+        self.effects = effects
+    }
 
-struct YeatAnotherFakeAction: Action {}
+    init(effects: [Any]) {
+        self.effects = effects.compactMap { $0 as? SideEffect }
+    }
+
+    func execute(with dispatcher: ActionDispatcher) {
+        effects.forEach { $0?.execute(with: dispatcher) }
+    }
+}

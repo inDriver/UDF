@@ -32,11 +32,25 @@ public class Store<State>: ActionDispatcher {
     fileprivate var actionsObservers: Set<Subscription<(State, Action)>> = []
     fileprivate var stateObservers: Set<Subscription<State>> = []
 
-    private let reducer: Reducer<State>
+    private let reducer: SideEffectReducer<State>
+    private let effectDispatchQueue = DispatchQueue(label: "com.udf.effect-queue", attributes: .concurrent)
+
+    public convenience init(
+        state: State,
+        reducer: @escaping Reducer<State>,
+        dispatchQueue: DispatchQueue = .init(label: "com.udf.store-lock-queue")
+    ) {
+        let sideEffectReducer: SideEffectReducer<State> = { state, action in
+            reducer(&state, action)
+            return nil
+        }
+
+        self.init(state: state, reducer: sideEffectReducer, dispatchQueue: dispatchQueue)
+    }
 
     public init(
         state: State,
-        reducer: @escaping Reducer<State>,
+        reducer: @escaping SideEffectReducer<State>,
         dispatchQueue: DispatchQueue = .init(label: "com.udf.store-lock-queue")
     ) {
         self.state = state
@@ -58,9 +72,13 @@ public class Store<State>: ActionDispatcher {
 
     /// Sync version of the `dispatch` method.
     fileprivate func dispatchSync(_ action: Action) {
-        reducer(&state, action)
+        let effect = reducer(&state, action)
         actionsObservers.forEach { $0.notify(with: (self.state, action)) }
         stateObservers.forEach { $0.notify(with: self.state) }
+        guard let effect = effect else { return }
+        effectDispatchQueue.async {
+            effect.execute(with: self)
+        }
     }
 
     /// Subscribe a component to observe the state **after** each change
@@ -152,7 +170,7 @@ public class Store<State>: ActionDispatcher {
     /// - Parameter transform: A function that transforms the `State` into a `LocalState`.
     /// - Returns: A `Store` with scoped `State`.
     public func scope<LocalState>(transform: @escaping (State) -> LocalState) -> Store<LocalState> {
-        scope(transform: transform, shoundUpdateLocalState: { _, _ in true })
+        scope(transform: transform, shouldUpdateLocalState: { _, _ in true })
     }
 
     /// Scopes the store to a local state.
@@ -161,17 +179,17 @@ public class Store<State>: ActionDispatcher {
     ///  if `LocalState` is the same after update, `Store` subscrbers will not be notified.
     /// - Returns: A `Store` with scoped `State`.
     public func scope<LocalState: Equatable>(transform: @escaping (State) -> LocalState) -> Store<LocalState> {
-        scope(transform: transform, shoundUpdateLocalState: !=)
+        scope(transform: transform, shouldUpdateLocalState: !=)
     }
 
     fileprivate func scope<LocalState>(
         transform: @escaping (State) -> LocalState,
-        shoundUpdateLocalState: @escaping (LocalState, LocalState) -> Bool
+        shouldUpdateLocalState: @escaping (LocalState, LocalState) -> Bool
     ) -> Store<LocalState> {
         return ProxyStore(
             store: self,
             transform: transform,
-            shoundUpdateLocalState: shoundUpdateLocalState,
+            shouldUpdateLocalState: shouldUpdateLocalState,
             dispatchQueue: storeDispatchQueue
         )
     }
@@ -184,18 +202,18 @@ public class Store<State>: ActionDispatcher {
 class ProxyStore<LocalState, State>: Store<LocalState> {
     private let store: Store<State>
     private let transform: (State) -> LocalState
-    private let shoundUpdateLocalState: (LocalState, LocalState) -> Bool
+    private let shouldUpdateLocalState: (LocalState, LocalState) -> Bool
 
     init(
         store: Store<State>,
         transform: @escaping (State) -> LocalState,
-        shoundUpdateLocalState: @escaping (LocalState, LocalState) -> Bool,
+        shouldUpdateLocalState: @escaping (LocalState, LocalState) -> Bool,
         dispatchQueue: DispatchQueue
     ) {
         self.store = store
         self.transform = transform
-        self.shoundUpdateLocalState = shoundUpdateLocalState
-        super.init(state: transform(store.state), reducer: { _, _ in }, dispatchQueue: dispatchQueue)
+        self.shouldUpdateLocalState = shouldUpdateLocalState
+        super.init(state: transform(store.state), reducer: { _, _ in nil }, dispatchQueue: dispatchQueue)
 
         store.onAction { [weak self] state, action in
             guard let self = self else { return }
@@ -206,7 +224,7 @@ class ProxyStore<LocalState, State>: Store<LocalState> {
         store.observe { [weak self] state in
             guard let self = self else { return }
             let newState = transform(state)
-            guard shoundUpdateLocalState(newState, self.state) else { return }
+            guard shouldUpdateLocalState(newState, self.state) else { return }
             self.state = newState
             self.stateObservers.forEach { $0.notify(with: newState) }
 
@@ -221,12 +239,12 @@ class ProxyStore<LocalState, State>: Store<LocalState> {
 
     override func scope<ScopeState>(
         transform: @escaping (LocalState) -> ScopeState,
-        shoundUpdateLocalState: @escaping (ScopeState, ScopeState) -> Bool
+        shouldUpdateLocalState: @escaping (ScopeState, ScopeState) -> Bool
     ) -> Store<ScopeState> {
         return ProxyStore<ScopeState, State>(
             store: store,
             transform: pipe(self.transform, transform),
-            shoundUpdateLocalState: shoundUpdateLocalState,
+            shouldUpdateLocalState: shouldUpdateLocalState,
             dispatchQueue: storeDispatchQueue
         )
     }
