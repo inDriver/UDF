@@ -13,10 +13,5 @@
 //  limitations under the License.
 //
 
-@testable import UDF
-
-struct FakeAction: Action {}
-
-struct OtherFakeAction: Action {}
-
-struct YeatAnotherFakeAction: Action {}
+///typealias for ``SideEffect`` that should return a ``Result`` inside an  ``Action``.
+public typealias ResultAction<Success, Failure: Error> = (Result<Success, Failure>) -> Action

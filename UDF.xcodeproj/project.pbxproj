@@ -15,6 +15,12 @@
 		7D802102272682420088B46D /* ClosureConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D802101272682420088B46D /* ClosureConnector.swift */; };
 		7D802104272682E70088B46D /* FakeActionListenerConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D802103272682E70088B46D /* FakeActionListenerConnector.swift */; };
 		7D8021062726834A0088B46D /* FakeActionListenerAndConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8021052726834A0088B46D /* FakeActionListenerAndConnector.swift */; };
+		7D93C265291E7B27008B1D6D /* SideEffectProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D93C264291E7B27008B1D6D /* SideEffectProtocol.swift */; };
+		7D93C268291E7BCC008B1D6D /* CombineSideEffect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D93C267291E7BCC008B1D6D /* CombineSideEffect.swift */; };
+		7D93C26A291E7BE1008B1D6D /* SideEffectTypealiases.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D93C269291E7BE1008B1D6D /* SideEffectTypealiases.swift */; };
+		7D93C26C291E7C37008B1D6D /* SideEffectsBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D93C26B291E7C37008B1D6D /* SideEffectsBuilder.swift */; };
+		7D93C26E291E86A1008B1D6D /* FakeSideEffect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D93C26D291E86A1008B1D6D /* FakeSideEffect.swift */; };
+		7DFFAB47290979D600804542 /* SideEffectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DFFAB46290979D600804542 /* SideEffectTests.swift */; };
 		9E45E1862694A640003B0321 /* Subscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E45E17C2694A640003B0321 /* Subscription.swift */; };
 		9E45E1882694A640003B0321 /* ActionDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E45E17E2694A640003B0321 /* ActionDispatcher.swift */; };
 		9E45E18A2694A640003B0321 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E45E1802694A640003B0321 /* Store.swift */; };
@@ -63,6 +69,12 @@
 		7D802101272682420088B46D /* ClosureConnector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClosureConnector.swift; sourceTree = "<group>"; };
 		7D802103272682E70088B46D /* FakeActionListenerConnector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeActionListenerConnector.swift; sourceTree = "<group>"; };
 		7D8021052726834A0088B46D /* FakeActionListenerAndConnector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeActionListenerAndConnector.swift; sourceTree = "<group>"; };
+		7D93C264291E7B27008B1D6D /* SideEffectProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideEffectProtocol.swift; sourceTree = "<group>"; };
+		7D93C267291E7BCC008B1D6D /* CombineSideEffect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombineSideEffect.swift; sourceTree = "<group>"; };
+		7D93C269291E7BE1008B1D6D /* SideEffectTypealiases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideEffectTypealiases.swift; sourceTree = "<group>"; };
+		7D93C26B291E7C37008B1D6D /* SideEffectsBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideEffectsBuilder.swift; sourceTree = "<group>"; };
+		7D93C26D291E86A1008B1D6D /* FakeSideEffect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeSideEffect.swift; sourceTree = "<group>"; };
+		7DFFAB46290979D600804542 /* SideEffectTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideEffectTests.swift; sourceTree = "<group>"; };
 		9E45E17C2694A640003B0321 /* Subscription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Subscription.swift; sourceTree = "<group>"; };
 		9E45E17E2694A640003B0321 /* ActionDispatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActionDispatcher.swift; sourceTree = "<group>"; };
 		9E45E1802694A640003B0321 /* Store.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
@@ -123,6 +135,17 @@
 			path = Connector;
 			sourceTree = "<group>";
 		};
+		7D93C266291E7BB2008B1D6D /* SideEffect */ = {
+			isa = PBXGroup;
+			children = (
+				7D93C264291E7B27008B1D6D /* SideEffectProtocol.swift */,
+				7D93C267291E7BCC008B1D6D /* CombineSideEffect.swift */,
+				7D93C269291E7BE1008B1D6D /* SideEffectTypealiases.swift */,
+				7D93C26B291E7C37008B1D6D /* SideEffectsBuilder.swift */,
+			);
+			path = SideEffect;
+			sourceTree = "<group>";
+		};
 		9E45E1AB2694A701003B0321 /* Connector */ = {
 			isa = PBXGroup;
 			children = (
@@ -166,6 +189,7 @@
 				9E45E1C42694A713003B0321 /* FakeAction.swift */,
 				7D802103272682E70088B46D /* FakeActionListenerConnector.swift */,
 				7D8021052726834A0088B46D /* FakeActionListenerAndConnector.swift */,
+				7D93C26D291E86A1008B1D6D /* FakeSideEffect.swift */,
 			);
 			path = TestDoubles;
 			sourceTree = "<group>";
@@ -191,6 +215,7 @@
 		9EBAC3E92694A5CC008EDFD5 /* UDF */ = {
 			isa = PBXGroup;
 			children = (
+				7D93C266291E7BB2008B1D6D /* SideEffect */,
 				9E45E1AE2694A701003B0321 /* ActionListener */,
 				9E45E1B02694A701003B0321 /* Component */,
 				9E45E1AB2694A701003B0321 /* Connector */,
@@ -217,6 +242,7 @@
 				9E45E1982694A647003B0321 /* StoreBasicTests.swift */,
 				9E45E1992694A647003B0321 /* StoreDoubleScopeTests.swift */,
 				9E45E1962694A647003B0321 /* StoreScopeTests.swift */,
+				7DFFAB46290979D600804542 /* SideEffectTests.swift */,
 				9EBAC3F72694A5CC008EDFD5 /* Info.plist */,
 			);
 			path = UDFTests;
@@ -331,8 +357,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7D93C26A291E7BE1008B1D6D /* SideEffectTypealiases.swift in Sources */,
 				9E45E18A2694A640003B0321 /* Store.swift in Sources */,
 				7D802102272682420088B46D /* ClosureConnector.swift in Sources */,
+				7D93C268291E7BCC008B1D6D /* CombineSideEffect.swift in Sources */,
 				9E45E1B62694A701003B0321 /* ActionListener.swift in Sources */,
 				9E45E18D2694A640003B0321 /* Action.swift in Sources */,
 				9E45E1882694A640003B0321 /* ActionDispatcher.swift in Sources */,
@@ -340,11 +368,13 @@
 				9E45E1862694A640003B0321 /* Subscription.swift in Sources */,
 				9E45E1B52694A701003B0321 /* Mapper.swift in Sources */,
 				9E45E18F2694A640003B0321 /* Disposer.swift in Sources */,
+				7D93C265291E7B27008B1D6D /* SideEffectProtocol.swift in Sources */,
 				9E45E1B82694A701003B0321 /* ViewComponent.swift in Sources */,
 				9E45E1B42694A701003B0321 /* Connector.swift in Sources */,
 				9E45E18C2694A640003B0321 /* Reducer.swift in Sources */,
 				7D8020FE2726700E0088B46D /* ServiceActionListener.swift in Sources */,
 				7D8020FC27266FDF0088B46D /* ClosureActionListenerConnector.swift in Sources */,
+				7D93C26C291E7C37008B1D6D /* SideEffectsBuilder.swift in Sources */,
 				7D1847E72747DE510027823F /* Propsable.swift in Sources */,
 				9E45E18B2694A640003B0321 /* Utils.swift in Sources */,
 				9E45E1B92694A701003B0321 /* ServiceComponent.swift in Sources */,
@@ -365,12 +395,14 @@
 				9E45E1C52694A713003B0321 /* FakeComponentConnector.swift in Sources */,
 				9E45E1C92694A713003B0321 /* FakeActionListener.swift in Sources */,
 				9E45E1C82694A713003B0321 /* FakeConnector.swift in Sources */,
+				7D93C26E291E86A1008B1D6D /* FakeSideEffect.swift in Sources */,
 				9E45E19C2694A647003B0321 /* ActionListenerTests.swift in Sources */,
 				9E45E1A12694A647003B0321 /* DisposerTests.swift in Sources */,
 				9E45E1C62694A713003B0321 /* TestState.swift in Sources */,
 				9E45E19F2694A647003B0321 /* StoreBasicTests.swift in Sources */,
 				7D8021062726834A0088B46D /* FakeActionListenerAndConnector.swift in Sources */,
 				9E45E1CA2694A713003B0321 /* FakeAction.swift in Sources */,
+				7DFFAB47290979D600804542 /* SideEffectTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
