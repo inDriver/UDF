@@ -34,8 +34,4 @@ public struct SideEffectsBuilder {
     public static func buildBlock(_ effects: SideEffect...) -> SideEffectProtocol {
         CombineSideEffect(effects: effects)
     }
-
-    public static func buildBlock(_ effects: Any...) -> SideEffectProtocol {
-        CombineSideEffect(effects: effects)
-    }
 }
