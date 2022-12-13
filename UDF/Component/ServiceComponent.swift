@@ -21,5 +21,7 @@ import Foundation
 public protocol ServiceComponent: Component {}
 
 public extension ServiceComponent {
-    var queue: DispatchQueue { .global(qos: .userInitiated) }
+    // TODO: удалить ли тут очередь?
+    //var queue: DispatchQueue { .global(qos: .userInitiated) }
+    var queue: DispatchQueue? { nil }
 }

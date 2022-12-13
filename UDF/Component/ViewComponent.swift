@@ -20,5 +20,5 @@ import Foundation
 public protocol ViewComponent: Component {}
 
 public extension ViewComponent {
-    var queue: DispatchQueue { .main }
+    var queue: DispatchQueue? { .main }
 }

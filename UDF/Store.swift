@@ -14,6 +14,8 @@
 //
 
 import Foundation
+import Combine
+
 /// The Store is a simple `State` manager.
 /// An app usually has a single instance of the main store.
 /// Use the `scope` methods to derive proxy stores that can be passed to submodules.
@@ -31,6 +33,10 @@ public class Store<State>: ActionDispatcher {
     fileprivate let storeDispatchQueue: DispatchQueue
     fileprivate var actionsObservers: Set<Subscription<(State, Action)>> = []
     fileprivate var stateObservers: Set<Subscription<State>> = []
+
+    fileprivate var combineSubscriptions = Set<AnyCancellable>()
+
+    let publisher = PassthroughSubject<State, Never>()
 
     private let reducer: SideEffectReducer<State>
     private let effectDispatchQueue = DispatchQueue(label: "com.udf.effect-queue", attributes: .concurrent)
@@ -75,6 +81,9 @@ public class Store<State>: ActionDispatcher {
         let effect = reducer(&state, action)
         actionsObservers.forEach { $0.notify(with: (self.state, action)) }
         stateObservers.forEach { $0.notify(with: self.state) }
+
+        publisher.send(self.state)
+
         guard let effect = effect else { return }
         effectDispatchQueue.async {
             effect.execute(with: self)
@@ -104,6 +113,37 @@ public class Store<State>: ActionDispatcher {
             action: { [weak subscription] in
                 guard let subscription = subscription else { return }
                 self.stateObservers.remove(subscription)
+            }
+        )
+
+        return stopObservation.async(on: storeDispatchQueue)
+    }
+
+    /// Subscribe a component to observe the state **after** each change
+    ///
+    /// - Parameter observer: this closure will be called **when subscribe** and every time **after** state has changed.
+    ///
+    public func observeCombine(on queue: DispatchQueue? = nil, with observer: @escaping (State) -> Void) -> Disposable {
+        let subject = PassthroughSubject<State, Never>()
+        publisher.subscribe(subject).store(in: &combineSubscriptions)
+
+        // TODO: какую очередь использовать, если queue = nil?
+        let queue = queue ?? storeDispatchQueue
+        var subscriber:Cancellable? = subject
+            .receive(on: queue)
+            .sink { [weak self] value in
+                guard self != nil else { return }
+                observer(value)
+            }
+
+        storeDispatchQueue.async {
+            subject.send(self.state)
+        }
+
+        let stopObservation = Disposable(
+            id: "remove the subscriber \(String(describing: subscriber)) on deinit",
+            action: {
+                subscriber = nil
             }
         )
 
