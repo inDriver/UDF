@@ -28,6 +28,7 @@ import Combine
 /// And then the Store will notify all the subscribers with the new State.
 public class Store<State>: ActionDispatcher {
     public fileprivate(set) var state: State
+    public fileprivate(set) var publisher = PassthroughSubject<State, Never>()
 
     fileprivate let disposer = Disposer()
     fileprivate let storeDispatchQueue: DispatchQueue
@@ -35,8 +36,6 @@ public class Store<State>: ActionDispatcher {
     fileprivate var stateObservers: Set<Subscription<State>> = []
 
     fileprivate var combineSubscriptions = Set<AnyCancellable>()
-
-    let publisher = PassthroughSubject<State, Never>()
 
     private let reducer: SideEffectReducer<State>
     private let effectDispatchQueue = DispatchQueue(label: "com.udf.effect-queue", attributes: .concurrent)
@@ -124,22 +123,20 @@ public class Store<State>: ActionDispatcher {
     /// - Parameter observer: this closure will be called **when subscribe** and every time **after** state has changed.
     ///
     public func observeCombine(on queue: DispatchQueue? = nil, with observer: @escaping (State) -> Void) -> Disposable {
-        let subject = PassthroughSubject<State, Never>()
+        let subject = CurrentValueSubject<State, Never>(self.state)
         publisher.subscribe(subject).store(in: &combineSubscriptions)
 
-        // TODO: какую очередь использовать, если queue = nil?
-        let queue = queue ?? storeDispatchQueue
-        var subscriber:Cancellable? = subject
+        // TODO: изучить подробней момент с очередью, получается все на main сейчас
+        let queue = queue ?? DispatchQueue.main
+        var subscriber:AnyCancellable? = subject
             .receive(on: queue)
             .sink { [weak self] value in
                 guard self != nil else { return }
                 observer(value)
             }
 
-        storeDispatchQueue.async {
-            subject.send(self.state)
-        }
-
+        // TODO: Disposable для решения проблемы с захватом ClosureConnector
+        // Если получится ее решить иначе, то можно будет обойтись без него
         let stopObservation = Disposable(
             id: "remove the subscriber \(String(describing: subscriber)) on deinit",
             action: {

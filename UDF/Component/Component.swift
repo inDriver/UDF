@@ -128,19 +128,6 @@ public extension Component where Self: Connector {
         connect(to: store) { $0[keyPath: keypath] }
     }
 
-//  TODO: Не стала пока удалять старый метод
-//    /// Connects a component to a store when the `Component` is a `Connector`.
-//    ///
-//    /// - Parameters:
-//    ///   - store: A `Store` to connect to.
-//    ///   - transform: A closure that transforms the `Store`'s `State` to a `State` of the `Connector`.
-//    func connect<State>(to store: Store<State>, transform: @escaping (State) -> Self.State) {
-//        store.observe(on: queue) { [weak self] state in
-//            guard let self = self else { return }
-//            self.updateProps(state: state, connector: self, dispatcher: store, transform: transform)
-//        }.dispose(on: disposer)
-//    }
-
     /// Connects a component to a store when the `Component` is a `Connector`.
     ///
     /// - Parameters:
@@ -155,18 +142,6 @@ public extension Component where Self: Connector {
 }
 
 public extension Component {
-//  TODO: Не стала пока удалять старый метод
-//    func connect<State, ConnectorType: Connector>(
-//        to store: Store<State>,
-//        by connector: ConnectorType,
-//        transform: @escaping (State) -> ConnectorType.State
-//    ) where ConnectorType.Props == Props {
-//        store.observe(on: queue) { [weak self] state in
-//            self?.updateProps(state: state, connector: connector, dispatcher: store, transform: transform)
-//        }.dispose(on: disposer)
-//    }
-
-
     func connect<State, ConnectorType: Connector>(
         to store: Store<State>,
         by connector: ConnectorType,
