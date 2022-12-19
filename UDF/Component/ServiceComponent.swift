@@ -19,6 +19,6 @@ import Foundation
 public protocol ServiceComponent: Component {}
 
 public extension ServiceComponent {
-    // TODO: решить вопрос с очередью, main или nil
-    var queue: DispatchQueue? { nil }
+    // TODO: решить вопрос с очередью, main или другая
+    var queue: DispatchQueue { .main }
 }

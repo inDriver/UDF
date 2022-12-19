@@ -28,13 +28,11 @@ import Combine
 /// And then the Store will notify all the subscribers with the new State.
 public class Store<State>: ActionDispatcher {
     public fileprivate(set) var state: State
-    public fileprivate(set) var publisher = PassthroughSubject<State, Never>()
+    public fileprivate(set) var publisher: CurrentValueSubject<State, Never>
 
     fileprivate let disposer = Disposer()
     fileprivate let storeDispatchQueue: DispatchQueue
     fileprivate var actionsObservers: Set<Subscription<(State, Action)>> = []
-    fileprivate var stateObservers: Set<Subscription<State>> = []
-
     fileprivate var combineSubscriptions = Set<AnyCancellable>()
 
     private let reducer: SideEffectReducer<State>
@@ -60,6 +58,8 @@ public class Store<State>: ActionDispatcher {
     ) {
         self.state = state
         self.reducer = reducer
+
+        publisher = CurrentValueSubject<State, Never>(state)
         storeDispatchQueue = dispatchQueue
     }
 
@@ -79,43 +79,12 @@ public class Store<State>: ActionDispatcher {
     fileprivate func dispatchSync(_ action: Action) {
         let effect = reducer(&state, action)
         actionsObservers.forEach { $0.notify(with: (self.state, action)) }
-        stateObservers.forEach { $0.notify(with: self.state) }
-
         publisher.send(self.state)
 
         guard let effect = effect else { return }
         effectDispatchQueue.async {
             effect.execute(with: self)
         }
-    }
-
-    /// Subscribe a component to observe the state **after** each change
-    ///
-    /// - Parameter observer: this closure will be called **when subscribe** and every time **after** state has changed.
-    ///
-    /// - Returns: A `Disposable`, to stop observation call .dispose() on it, or add it to a `Disposer`
-    public func observe(on queue: DispatchQueue? = nil, with observer: @escaping (State) -> Void) -> Disposable {
-        var subscription: Subscription<State>
-        if let queue = queue {
-            subscription = Subscription(action: observer).async(on: queue)
-        } else {
-            subscription = Subscription(action: observer)
-        }
-
-        storeDispatchQueue.async {
-            self.stateObservers.insert(subscription)
-            subscription.notify(with: self.state)
-        }
-
-        let stopObservation = Disposable(
-            id: "remove the observer \(String(describing: observer)) from observers list",
-            action: { [weak subscription] in
-                guard let subscription = subscription else { return }
-                self.stateObservers.remove(subscription)
-            }
-        )
-
-        return stopObservation.async(on: storeDispatchQueue)
     }
 
     /// Subscribe a component to observe the state **after** each change
@@ -173,7 +142,7 @@ public class Store<State>: ActionDispatcher {
         }
 
         let stopObservation = Disposable(
-            id: "remove the Actions observe: \(String(describing: observe)) from observers list",
+            id: "remove the Actions observe: \(String(describing: observeCombine)) from observers list",
             action: { [weak subscription] in
                 guard let subscription = subscription else { return }
                 self.actionsObservers.remove(subscription)
@@ -258,12 +227,13 @@ class ProxyStore<LocalState, State>: Store<LocalState> {
             self.actionsObservers.forEach { $0.notify(with: (newState, action)) }
         }.dispose(on: disposer)
 
-        store.observe { [weak self] state in
+        store.observeCombine { [weak self] state in
             guard let self = self else { return }
             let newState = transform(state)
             guard shouldUpdateLocalState(newState, self.state) else { return }
             self.state = newState
-            self.stateObservers.forEach { $0.notify(with: newState) }
+            
+            self.publisher.send(self.state)
 
         }.dispose(on: disposer)
     }

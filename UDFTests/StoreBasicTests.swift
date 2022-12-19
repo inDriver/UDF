@@ -30,7 +30,7 @@ class StoreBasicTests: XCTestCase {
         let sut = Store(state: state) { _, _ in }
 
         // when
-        sut.observe { value in
+        sut.observeCombine { value in
             if value == state { exp.fulfill() }
         }.dispose(on: disposer)
 
@@ -49,7 +49,7 @@ class StoreBasicTests: XCTestCase {
         let sut = Store(state: 1, reducer: reduce)
 
         // when
-        sut.observe { value in
+        sut.observeCombine { value in
             result.append(value)
             if result.count != expectedStateSequence.count {
                 sut.dispatch(FakeAction())
