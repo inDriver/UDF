@@ -114,7 +114,7 @@ public final class Disposer {
         }
     }
 
-    /// Add Combine Subscription to stor in Set of AnyCancellable
+    /// Add Combine Subscription to store in Set of AnyCancellable
     ///
     /// - Parameter subscription: AnyCancellable
     public

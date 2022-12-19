@@ -15,10 +15,12 @@
 
 import Foundation
 
-/// A protocol for service components.
+/// A protocol for service components. Executes on global queue with
+/// `.userInitiated` quality-of-service class.
+/// If you need to use custom queue then override `queue` property.
 public protocol ServiceComponent: Component {}
 
 public extension ServiceComponent {
-    // TODO: решить вопрос с очередью, main или другая
-    var queue: DispatchQueue { .main }
+    // TODO: решить вопрос с очередью: global, main или другая?
+    var queue: DispatchQueue { .global(qos: .userInitiated) }
 }
