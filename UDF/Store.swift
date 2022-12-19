@@ -33,7 +33,7 @@ public class Store<State>: ActionDispatcher {
     fileprivate let disposer = Disposer()
     fileprivate let storeDispatchQueue: DispatchQueue
     fileprivate var actionsObservers: Set<Subscription<(State, Action)>> = []
-    fileprivate var combineSubscriptions = Set<AnyCancellable>()
+    fileprivate var subscriptions = Set<AnyCancellable>()
 
     private let reducer: SideEffectReducer<State>
     private let effectDispatchQueue = DispatchQueue(label: "com.udf.effect-queue", attributes: .concurrent)
@@ -91,10 +91,9 @@ public class Store<State>: ActionDispatcher {
     ///
     /// - Parameter observer: this closure will be called **when subscribe** and every time **after** state has changed.
     ///
-    public func observeCombine(on queue: DispatchQueue? = nil, with observer: @escaping (State) -> Void) -> Disposable {
+    public func observe(on queue: DispatchQueue? = nil, with observer: @escaping (State) -> Void) -> Disposable {
         let subject = CurrentValueSubject<State, Never>(self.state)
-        publisher.subscribe(subject).store(in: &combineSubscriptions)
-
+        publisher.subscribe(subject).store(in: &subscriptions)
         // TODO: изучить подробней момент с очередью, получается все на main сейчас
         let queue = queue ?? DispatchQueue.main
         var subscriber:AnyCancellable? = subject
@@ -142,7 +141,7 @@ public class Store<State>: ActionDispatcher {
         }
 
         let stopObservation = Disposable(
-            id: "remove the Actions observe: \(String(describing: observeCombine)) from observers list",
+            id: "remove the Actions observe: \(String(describing: observer)) from observers list",
             action: { [weak subscription] in
                 guard let subscription = subscription else { return }
                 self.actionsObservers.remove(subscription)
@@ -227,7 +226,7 @@ class ProxyStore<LocalState, State>: Store<LocalState> {
             self.actionsObservers.forEach { $0.notify(with: (newState, action)) }
         }.dispose(on: disposer)
 
-        store.observeCombine { [weak self] state in
+        store.observe { [weak self] state in
             guard let self = self else { return }
             let newState = transform(state)
             guard shouldUpdateLocalState(newState, self.state) else { return }

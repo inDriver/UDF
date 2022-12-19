@@ -13,6 +13,7 @@
 //  limitations under the License.
 //
 import Foundation
+import Combine
 
 /// Parent protocol for components. Use ``ViewComponent`` or ``ServiceComponent`` for your component.
 public protocol Component: Propsable {
@@ -134,10 +135,13 @@ public extension Component where Self: Connector {
     ///   - store: A `Store` to connect to.
     ///   - transform: A closure that transforms the `Store`'s `State` to a `State` of the `Connector`.
     func connect<State>(to store: Store<State>, transform: @escaping (State) -> Self.State) {
-        store.observeCombine(on: queue) { [weak self] state in
-            guard let self = self else { return }
-            self.updateProps(state: state, connector: self, dispatcher: store, transform: transform)
-        }.dispose(on: disposer)
+        let subscription = store.publisher
+            .receive(on: queue)
+            .sink { [weak self] state in
+                guard let self = self else { return }
+                self.updateProps(state: state, connector: self, dispatcher: store, transform: transform)
+            }
+        disposer.store(subscription)
     }
 }
 
@@ -147,9 +151,13 @@ public extension Component {
         by connector: ConnectorType,
         transform: @escaping (State) -> ConnectorType.State
     ) where ConnectorType.Props == Props {
-        store.observeCombine(on: queue) { [weak self] state in
-            self?.updateProps(state: state, connector: connector, dispatcher: store, transform: transform)
-        }.dispose(on: disposer)
+        let subscription = store.publisher
+            .receive(on: queue)
+            .sink { [weak self] state in
+                guard let self = self else { return }
+                self.updateProps(state: state, connector: connector, dispatcher: store, transform: transform)
+            }
+        disposer.store(subscription)
     }
 }
 

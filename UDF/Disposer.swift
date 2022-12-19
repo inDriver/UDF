@@ -15,6 +15,7 @@
 
 import Dispatch
 import Foundation
+import Combine
 
 /// Disposable are the simple wrappers over closures which allow you to have a context when debug.
 public class Disposable {
@@ -98,6 +99,8 @@ extension Disposable {
 /// }
 /// ```
 public final class Disposer {
+    private var subscriptions = Set<AnyCancellable>()
+
     private var disposals: [Disposable] = []
     private let lockQueue = DispatchQueue(label: "com.udf.disposer-lock-queue")
 
@@ -110,6 +113,15 @@ public final class Disposer {
             self.disposals.append(disposal)
         }
     }
+
+    /// Add Combine Subscription to stor in Set of AnyCancellable
+    ///
+    /// - Parameter subscription: AnyCancellable
+    public
+    func store(_ subscription: AnyCancellable) {
+        subscription.store(in: &subscriptions)
+    }
+
 
     public init() { }
 

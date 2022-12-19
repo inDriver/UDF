@@ -50,7 +50,7 @@ class StoreDoubleScopeTests: XCTestCase {
             .scope(\.localState)
 
         // when
-        localStore.observeCombine {
+        localStore.observe {
             localState = $0
             expectation.fulfill()
         }.dispose(on: disposer)
@@ -74,7 +74,7 @@ class StoreDoubleScopeTests: XCTestCase {
             .scope(\.localState)
 
         // when
-        localStore.observeCombine {
+        localStore.observe {
             localStates.append($0)
             if localStates.count == 2 { expectation.fulfill() }
         }.dispose(on: disposer)
@@ -125,7 +125,7 @@ class StoreDoubleScopeTests: XCTestCase {
             .scope(\.localState)
 
         // when
-        store.observeCombine {
+        store.observe {
             globalStates.append($0)
             if globalStates.count == 2 { expectation.fulfill() }
         }.dispose(on: disposer)
