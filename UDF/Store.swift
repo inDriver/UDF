@@ -92,26 +92,24 @@ public class Store<State>: ActionDispatcher {
     /// - Parameter observer: this closure will be called **when subscribe** and every time **after** state has changed.
     ///
     public func observe(on queue: DispatchQueue? = nil, with observer: @escaping (State) -> Void) -> Disposable {
-        let subject = CurrentValueSubject<State, Never>(self.state)
-        publisher.subscribe(subject).store(in: &subscriptions)
-        // TODO: изучить подробней момент с очередью, получается все на main сейчас
+        // TODO: изучить подробней момент с очередью по умолчанию
         let queue = queue ?? DispatchQueue.main
-        var subscriber:AnyCancellable? = subject
+        let subscriber = publisher
             .receive(on: queue)
             .sink { [weak self] value in
                 guard self != nil else { return }
                 observer(value)
             }
 
-        // TODO: Disposable для решения проблемы с захватом ClosureConnector
-        // Если получится ее решить иначе, то можно будет обойтись без него
+        subscriber.store(in: &subscriptions)
+
         let stopObservation = Disposable(
             id: "remove the subscriber \(String(describing: subscriber)) on deinit",
-            action: {
-                subscriber = nil
+            action: { [weak subscriber] in
+                guard let subscriber = subscriber else { return }
+                self.subscriptions.remove(subscriber)
             }
         )
-
         return stopObservation.async(on: storeDispatchQueue)
     }
 
