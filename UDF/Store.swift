@@ -37,7 +37,7 @@ public class Store<State>: ActionDispatcher {
     private let reducer: SideEffectReducer<State>
     private let effectDispatchQueue = DispatchQueue(label: "com.udf.effect-queue", attributes: .concurrent)
 
-    var state: State {
+    public fileprivate(set) var state: State {
         get {
             publisher.value
         }
