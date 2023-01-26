@@ -27,7 +27,6 @@ import Combine
 /// ```
 /// And then the Store will notify all the subscribers with the new State.
 public class Store<State>: ActionDispatcher {
-    public fileprivate(set) var state: State
     public fileprivate(set) var publisher: CurrentValueSubject<State, Never>
 
     fileprivate let disposer = Disposer()
@@ -37,6 +36,15 @@ public class Store<State>: ActionDispatcher {
 
     private let reducer: SideEffectReducer<State>
     private let effectDispatchQueue = DispatchQueue(label: "com.udf.effect-queue", attributes: .concurrent)
+
+    var state: State {
+        get {
+            publisher.value
+        }
+        set {
+            publisher.send(newValue)
+        }
+    }
 
     public convenience init(
         state: State,
@@ -56,7 +64,6 @@ public class Store<State>: ActionDispatcher {
         reducer: @escaping SideEffectReducer<State>,
         dispatchQueue: DispatchQueue = .init(label: "com.udf.store-lock-queue")
     ) {
-        self.state = state
         self.reducer = reducer
 
         publisher = CurrentValueSubject<State, Never>(state)
@@ -77,9 +84,13 @@ public class Store<State>: ActionDispatcher {
 
     /// Sync version of the `dispatch` method.
     fileprivate func dispatchSync(_ action: Action) {
-        let effect = reducer(&state, action)
-        actionsObservers.forEach { $0.notify(with: (self.state, action)) }
-        publisher.send(self.state)
+        var newState = publisher.value
+        defer {
+            state = newState
+        }
+
+        let effect = reducer(&newState, action)
+        actionsObservers.forEach { $0.notify(with: (newState, action)) }
 
         guard let effect = effect else { return }
         effectDispatchQueue.async {
@@ -229,9 +240,6 @@ class ProxyStore<LocalState, State>: Store<LocalState> {
             let newState = transform(state)
             guard shouldUpdateLocalState(newState, self.state) else { return }
             self.state = newState
-            
-            self.publisher.send(self.state)
-
         }.dispose(on: disposer)
     }
 
