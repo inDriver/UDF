@@ -17,6 +17,10 @@ struct CombineSideEffect: SideEffectProtocol {
 
     let effects: [SideEffect]
 
+    init(effects: [SideEffect]) {
+        self.effects = effects.compactMap { $0 }
+    }
+
     func execute(with dispatcher: ActionDispatcher) {
         effects.forEach { $0?.execute(with: dispatcher) }
     }
