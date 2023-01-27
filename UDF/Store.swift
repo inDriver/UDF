@@ -28,23 +28,15 @@ import Combine
 /// And then the Store will notify all the subscribers with the new State.
 public class Store<State>: ActionDispatcher {
     public fileprivate(set) var publisher: CurrentValueSubject<State, Never>
+    public fileprivate(set) var actionsSubject: PassthroughSubject<(State, Action), Never> = .init()
 
     fileprivate let disposer = Disposer()
     fileprivate let storeDispatchQueue: DispatchQueue
-    fileprivate var actionsObservers: Set<Subscription<(State, Action)>> = []
-    fileprivate var subscriptions = Set<AnyCancellable>()
 
     private let reducer: SideEffectReducer<State>
     private let effectDispatchQueue = DispatchQueue(label: "com.udf.effect-queue", attributes: .concurrent)
 
-    public fileprivate(set) var state: State {
-        get {
-            publisher.value
-        }
-        set {
-            publisher.send(newValue)
-        }
-    }
+    public var state: State { publisher.value }
 
     public convenience init(
         state: State,
@@ -84,13 +76,8 @@ public class Store<State>: ActionDispatcher {
 
     /// Sync version of the `dispatch` method.
     fileprivate func dispatchSync(_ action: Action) {
-        var newState = publisher.value
-        defer {
-            state = newState
-        }
-
-        let effect = reducer(&newState, action)
-        actionsObservers.forEach { $0.notify(with: (newState, action)) }
+        let effect = reducer(&publisher.value, action)
+        actionsSubject.send(((state, action)))
 
         guard let effect = effect else { return }
         effectDispatchQueue.async {
@@ -102,29 +89,14 @@ public class Store<State>: ActionDispatcher {
     ///
     /// - Parameter observer: this closure will be called **when subscribe** and every time **after** state has changed.
     ///
-    public func observe(on queue: DispatchQueue? = nil, with observer: @escaping (State) -> Void) -> Disposable {
-        // TODO: изучить подробней момент с очередью по умолчанию
-        let queue = queue ?? DispatchQueue.main
+    public func observe(on queue: DispatchQueue = .main, with observer: @escaping (State) -> Void) -> Disposable {
         let subscriber = publisher
             .receive(on: queue)
-            .sink { [weak self] value in
-                guard self != nil else { return }
-                observer(value)
-            }
-
-        subscriber.store(in: &subscriptions)
-
-        let stopObservation = Disposable(
-            id: "remove the subscriber \(String(describing: subscriber)) on deinit",
-            action: { [weak subscriber] in
-                guard let subscriber = subscriber else { return }
-                self.subscriptions.remove(subscriber)
-            }
-        )
-        return stopObservation.async(on: storeDispatchQueue)
+            .sink(receiveValue: observer)
+        return subscriber
     }
 
-    /// Subscribes to observe Actions and the old State **before** the change when action has happened.
+    /// Subscribes to observe Actions and the old State **after** the change when action has happened.
     /// Recommended using only for debugging purposes.
     /// ```
     /// store.onAction{ action, state in
@@ -135,29 +107,15 @@ public class Store<State>: ActionDispatcher {
     ///
     /// - Returns: A `Disposable`, to stop observation call .dispose() on it, or add it to a `Disposer`
     public func onAction(
-        on queue: DispatchQueue? = nil,
+        on queue: DispatchQueue = .main,
         with observer: @escaping (State, Action) -> Void) -> Disposable {
+            let subscriber = actionsSubject
+                .receive(on: queue)
+                .sink {value in
+                    observer(value.0, value.1)
+                }
 
-        var subscription: Subscription<(State, Action)>
-        if let queue = queue {
-            subscription = Subscription(action: observer).async(on: queue)
-        } else {
-            subscription = Subscription(action: observer)
-        }
-
-        storeDispatchQueue.async {
-            self.actionsObservers.insert(subscription)
-        }
-
-        let stopObservation = Disposable(
-            id: "remove the Actions observe: \(String(describing: observer)) from observers list",
-            action: { [weak subscription] in
-                guard let subscription = subscription else { return }
-                self.actionsObservers.remove(subscription)
-            }
-        )
-
-        return stopObservation.async(on: storeDispatchQueue)
+        return subscriber
     }
 
     // MARK: - Scope
@@ -184,7 +142,7 @@ public class Store<State>: ActionDispatcher {
     /// - Parameter transform: A function that transforms the `State` into a `LocalState`.
     /// - Returns: A `Store` with scoped `State`.
     public func scope<LocalState>(transform: @escaping (State) -> LocalState) -> Store<LocalState> {
-        scope(transform: transform, shouldUpdateLocalState: { _, _ in true })
+        scope(transform: transform, shouldRemoveDublicates: { _, _ in false })
     }
 
     /// Scopes the store to a local state.
@@ -193,17 +151,17 @@ public class Store<State>: ActionDispatcher {
     ///  if `LocalState` is the same after update, `Store` subscrbers will not be notified.
     /// - Returns: A `Store` with scoped `State`.
     public func scope<LocalState: Equatable>(transform: @escaping (State) -> LocalState) -> Store<LocalState> {
-        scope(transform: transform, shouldUpdateLocalState: !=)
+        scope(transform: transform, shouldRemoveDublicates: ==)
     }
 
     fileprivate func scope<LocalState>(
         transform: @escaping (State) -> LocalState,
-        shouldUpdateLocalState: @escaping (LocalState, LocalState) -> Bool
+        shouldRemoveDublicates: @escaping (LocalState, LocalState) -> Bool
     ) -> Store<LocalState> {
         return ProxyStore(
             store: self,
             transform: transform,
-            shouldUpdateLocalState: shouldUpdateLocalState,
+            shouldRemoveDublicates: shouldRemoveDublicates,
             dispatchQueue: storeDispatchQueue
         )
     }
@@ -216,31 +174,35 @@ public class Store<State>: ActionDispatcher {
 class ProxyStore<LocalState, State>: Store<LocalState> {
     private let store: Store<State>
     private let transform: (State) -> LocalState
-    private let shouldUpdateLocalState: (LocalState, LocalState) -> Bool
+    private let shouldRemoveDublicates: (LocalState, LocalState) -> Bool
 
     init(
         store: Store<State>,
         transform: @escaping (State) -> LocalState,
-        shouldUpdateLocalState: @escaping (LocalState, LocalState) -> Bool,
+        shouldRemoveDublicates: @escaping (LocalState, LocalState) -> Bool,
         dispatchQueue: DispatchQueue
     ) {
         self.store = store
         self.transform = transform
-        self.shouldUpdateLocalState = shouldUpdateLocalState
+        self.shouldRemoveDublicates = shouldRemoveDublicates
         super.init(state: transform(store.state), reducer: { _, _ in nil }, dispatchQueue: dispatchQueue)
 
-        store.onAction { [weak self] state, action in
-            guard let self = self else { return }
-            let newState = transform(state)
-            self.actionsObservers.forEach { $0.notify(with: (newState, action)) }
-        }.dispose(on: disposer)
+        store.actionsSubject
+            .map { (state, action) in
+                (transform(state), action)
+            }
+            .sink { [weak self] (state, action) in
+                self?.actionsSubject.send((state, action))
+            }
+            .store(in: &disposer.subscriptions)
 
-        store.observe { [weak self] state in
-            guard let self = self else { return }
-            let newState = transform(state)
-            guard shouldUpdateLocalState(newState, self.state) else { return }
-            self.state = newState
-        }.dispose(on: disposer)
+        store.publisher
+            .map(transform)
+            .removeDuplicates(by: shouldRemoveDublicates)
+            .sink { [weak self] state in
+                self?.publisher.send(state)
+            }
+            .store(in: &disposer.subscriptions)
     }
 
     public override func dispatch(_ action: Action) {
@@ -251,12 +213,12 @@ class ProxyStore<LocalState, State>: Store<LocalState> {
 
     override func scope<ScopeState>(
         transform: @escaping (LocalState) -> ScopeState,
-        shouldUpdateLocalState: @escaping (ScopeState, ScopeState) -> Bool
+        shouldRemoveDublicates: @escaping (ScopeState, ScopeState) -> Bool
     ) -> Store<ScopeState> {
         return ProxyStore<ScopeState, State>(
             store: store,
             transform: pipe(self.transform, transform),
-            shouldUpdateLocalState: shouldUpdateLocalState,
+            shouldRemoveDublicates: shouldRemoveDublicates,
             dispatchQueue: storeDispatchQueue
         )
     }

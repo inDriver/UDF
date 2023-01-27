@@ -18,6 +18,7 @@ import UDF
 class FakeComponentConnector: ViewComponent, Connector {
     typealias Props = Int
 
+    var statesHistory = [Int]()
     var propsHistory = [Int]()
 
     var props = 0 {
@@ -37,7 +38,10 @@ class FakeComponentConnector: ViewComponent, Connector {
         self.propsDidSet = propsDidSet
     }
 
-    func stateToProps(state: Int, dispatcher _: ActionDispatcher) -> Int { state }
+    func stateToProps(state: Int, dispatcher _: ActionDispatcher) -> Int {
+        statesHistory.append(state)
+        return state
+    }
 
     deinit {
         onDeinit()

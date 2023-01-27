@@ -26,10 +26,12 @@ public protocol Component: Propsable {
     /// - Parameters:
     ///   - store: A `Store` to connect to.
     ///   - by: A `Connector` that transforms State to Props.
+    ///   - removeDuplicates: if true than ignore equal States
     ///   - transform: A closure that transforms the `Store`'s `State` to a `State` of the `Connector`.
-    func connect<State, ConnectorType: Connector>(
+    func connect<State: Equatable, ConnectorType: Connector>(
         to store: Store<State>,
         by connector: ConnectorType,
+        removeDuplicates: Bool,
         transform: @escaping (State) -> ConnectorType.State
     ) where ConnectorType.Props == Props
 }
@@ -40,8 +42,9 @@ public extension Component {
     ///
     /// - Parameters:
     ///   - store: A `Store` to connect to.
-    func connect<State>(to store: Store<State>) where State == Props {
-        connect(to: store) { state, _ in state }
+    ///   - removeDuplicates: if true than ignore equal States
+    func connect<State: Equatable>(to store: Store<State>, removeDuplicates: Bool = false) where State == Props {
+        connect(to: store, removeDuplicates: removeDuplicates) { state, _ in state }
     }
 
     /// Connects a component to a store using a connector with whole `Store`'s `State`.
@@ -49,11 +52,13 @@ public extension Component {
     /// - Parameters:
     ///   - store: A `Store` to connect to.
     ///   - by: A `Connector` that transforms State to Props.
-    func connect<State, ConnectorType: Connector>(
+    ///   - removeDuplicates: if true than ignore equal States
+    func connect<State: Equatable, ConnectorType: Connector>(
         to store: Store<State>,
-        by connector: ConnectorType
+        by connector: ConnectorType,
+        removeDuplicates: Bool = false
     ) where ConnectorType.State == State, ConnectorType.Props == Props {
-        connect(to: store, by: connector) { $0 }
+        connect(to: store, by: connector, removeDuplicates: removeDuplicates) { $0 }
     }
 
     /// Connects a component to a store using a connector and a keypath.
@@ -62,12 +67,14 @@ public extension Component {
     ///   - store: A `Store` to connect to.
     ///   - by: A `Connector` that transforms State to Props.
     ///   - keypath: A keypath for a `State` of the `Component`.
-    func connect<State, ConnectorType: Connector>(
+    ///   - removeDuplicates: if true than ignore equal States
+    func connect<State: Equatable, ConnectorType: Connector>(
         to store: Store<State>,
         by connector: ConnectorType,
-        state keypath: KeyPath<State, ConnectorType.State>
+        state keypath: KeyPath<State, ConnectorType.State>,
+        removeDuplicates: Bool = false
     ) where ConnectorType.Props == Props {
-        connect(to: store, by: connector) { $0[keyPath: keypath] }
+        connect(to: store, by: connector, removeDuplicates: removeDuplicates) { $0[keyPath: keypath] }
     }
 }
 
@@ -77,37 +84,46 @@ public extension Component {
     ///
     /// - Parameters:
     ///   - store: A `Store` to connect to.
+    ///   - removeDuplicates: if true than ignore equal States
     ///   - stateToProps: A closure that transforms the `Store`'s `State` into a `Props` of the `Component`.
-    func connect<State>(
+    func connect<State: Equatable>(
         to store: Store<State>,
+        removeDuplicates: Bool = false,
         stateToProps: @escaping (State, ActionDispatcher) -> Props) {
-        connect(to: store, stateToProps: stateToProps) { $0 }
+            connect(to: store, removeDuplicates: removeDuplicates, stateToProps: stateToProps) { $0 }
     }
 
     /// Connects a component to a store with stateToProps closure and keypath.
     ///
     /// - Parameters:
     ///   - store: A `Store` to connect to.
+    ///   - removeDuplicates: if true than ignore equal States
     ///   - stateToProps: A closure that transforms the `Component`'s `State` into a `Props` of the `Component`.
     ///   - keypath: A keypath for a `State` of the `Component`.
-    func connect<State, ConnectorState>(
+    func connect<State: Equatable, ConnectorState: Equatable>(
         to store: Store<State>,
+        removeDuplicates: Bool = false,
         stateToProps: @escaping (ConnectorState, ActionDispatcher) -> Props,
         state keypath: KeyPath<State, ConnectorState>) {
-        connect(to: store, stateToProps: stateToProps) { $0[keyPath: keypath] }
+            connect(to: store, removeDuplicates: removeDuplicates, stateToProps: stateToProps) { $0[keyPath: keypath] }
     }
 
     /// Connects a component to a store with stateToProps closure.
     ///
     /// - Parameters:
     ///   - store: A ``Store`` to connect to.
+    ///   - removeDuplicates: if true than ignore equal States
     ///   - stateToProps: A closure that transforms the `Component`'s `State` into a `Props` of the `Component`.
     ///   - transform: A closure that transforms the `Store`'s `State` to a `State` of the `Component`.
-    func connect<State, ConnectorState>(
+    func connect<State: Equatable, ConnectorState: Equatable>(
         to store: Store<State>,
+        removeDuplicates: Bool = false,
         stateToProps: @escaping (ConnectorState, ActionDispatcher) -> Props,
         transform: @escaping (State) -> ConnectorState) {
-        connect(to: store, by: ClosureConnector(closure: stateToProps), transform: transform)
+            connect(to: store,
+                    by: ClosureConnector(closure: stateToProps),
+                    removeDuplicates: removeDuplicates,
+                    transform: transform)
     }
 }
 
@@ -116,60 +132,74 @@ public extension Component where Self: Connector {
     ///
     /// - Parameters:
     ///   - store: A `Store` to connect to.
-    func connect<State>(to store: Store<State>) where Self.State == State {
-        connect(to: store) { $0 }
+    ///   - removeDuplicates: if true than ignore equal States
+    func connect<State: Equatable>(
+        to store: Store<State>,
+        removeDuplicates: Bool = false
+    ) where Self.State == State {
+        connect(to: store, removeDuplicates: removeDuplicates) { $0 }
     }
 
     /// Connects a component to a store when the `Component` is a `Connector`and with a keypath.
     ///
     /// - Parameters:
     ///   - store: A `Store` to connect to.
+    ///   - removeDuplicates: if true than ignore equal States
     ///   - keypath: A keypath for a `State` of the `Component`.
-    func connect<State>(to store: Store<State>, state keypath: KeyPath<State, Self.State>) {
-        connect(to: store) { $0[keyPath: keypath] }
+    func connect<State: Equatable>(
+        to store: Store<State>,
+        removeDuplicates: Bool = false,
+        state keypath: KeyPath<State, Self.State>) {
+            connect(to: store, removeDuplicates: removeDuplicates) { $0[keyPath: keypath] }
     }
 
     /// Connects a component to a store when the `Component` is a `Connector`.
     ///
     /// - Parameters:
     ///   - store: A `Store` to connect to.
+    ///   - removeDuplicates: if true than ignore equal States
     ///   - transform: A closure that transforms the `Store`'s `State` to a `State` of the `Connector`.
-    func connect<State>(to store: Store<State>, transform: @escaping (State) -> Self.State) {
-        let subscription = store.publisher
+    func connect<State: Equatable>(
+        to store: Store<State>,
+        removeDuplicates: Bool = false,
+        transform: @escaping (State) -> Self.State
+        ) {
+        store.publisher
             .receive(on: queue)
+            .map(transform)
+            .removeDuplicates(by: removeDuplicates ? { $0 == $1 } : { _, _ in false })
             .sink { [weak self] state in
                 guard let self = self else { return }
-                self.updateProps(state: state, connector: self, dispatcher: store, transform: transform)
-            }
-        disposer.store(subscription)
+                self.updateProps(state: state, connector: self, dispatcher: store)
+            }.store(in: &disposer.subscriptions)
     }
 }
 
 public extension Component {
-    func connect<State, ConnectorType: Connector>(
+    func connect<State: Equatable, ConnectorType: Connector>(
         to store: Store<State>,
         by connector: ConnectorType,
+        removeDuplicates: Bool = false,
         transform: @escaping (State) -> ConnectorType.State
     ) where ConnectorType.Props == Props {
-        let subscription = store.publisher
+        store.publisher
             .receive(on: queue)
+            .map(transform)
+            .removeDuplicates(by: removeDuplicates ? { $0 == $1 } : { _, _ in false })
             .sink { [weak self] state in
                 guard let self = self else { return }
-                self.updateProps(state: state, connector: connector, dispatcher: store, transform: transform)
-            }
-        disposer.store(subscription)
+                self.updateProps(state: state, connector: connector, dispatcher: store)
+            }.store(in: &disposer.subscriptions)
     }
 }
 
 extension Component {
-    func updateProps<State, ConnectorType: Connector>(
-        state: State,
+    func updateProps<ConnectorType: Connector>(
+        state: ConnectorType.State,
         connector: ConnectorType,
-        dispatcher: ActionDispatcher,
-        transform: @escaping (State) -> ConnectorType.State
+        dispatcher: ActionDispatcher
     ) where ConnectorType.Props == Props {
-        let componentState = transform(state)
-        let newProps = connector.stateToProps(state: componentState, dispatcher: dispatcher)
+        let newProps = connector.stateToProps(state: state, dispatcher: dispatcher)
         guard props != newProps else { return }
         props = newProps
     }
