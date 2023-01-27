@@ -21,6 +21,5 @@ import Foundation
 public protocol ServiceComponent: Component {}
 
 public extension ServiceComponent {
-    // TODO: решить вопрос с очередью: global, main или другая?
     var queue: DispatchQueue { .global(qos: .userInitiated) }
 }
