@@ -278,4 +278,25 @@ class ComponentTests: XCTestCase {
         waitForExpectations(timeout: 0.1, handler: nil)
         XCTAssertEqual(component.propsHistory, [1, 10, 20])
     }
+
+
+    func testRemoveDublicatesDoesntNotifyConnector() {
+        // Given
+        let store = Store(state: 1, reducer: reducer)
+        let exp = expectation(description: "all state updates received")
+        let component = FakeComponentConnector(propsDidSet: { props in
+            guard props.count == 3 else { return }
+            exp.fulfill()
+        })
+        component.connect(to: store, removeDuplicates: true)
+
+        // When
+        store.dispatch(FakeComponentConnector.Actions.valueDidChange(10))
+        store.dispatch(FakeComponentConnector.Actions.nothingDidHappen)
+        store.dispatch(FakeComponentConnector.Actions.valueDidChange(20))
+
+        // Then
+        waitForExpectations(timeout: 0.1, handler: nil)
+        XCTAssertEqual(component.statesHistory, [1, 10, 20])
+    }
 }
