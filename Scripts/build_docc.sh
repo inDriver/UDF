@@ -7,7 +7,7 @@ xcodebuild docbuild \
 
 $(xcrun --find docc) process-archive \
             transform-for-static-hosting /tmp/docbuild/udf/Build/Products/Debug-iphoneos/UDF.doccarchive \
-            --output-path docc \
+            --output-path docs \
             --hosting-base-path UDF
 
-echo "<script>window.location.href += \"/documentation/udf\"</script>" > docc/index.html;
+echo "<script>window.location.href += \"/documentation/udf\"</script>" > docs/index.html;
