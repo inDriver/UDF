@@ -10,4 +10,4 @@ $(xcrun --find docc) process-archive \
             --output-path docs \
             --hosting-base-path UDF
 
-echo "<script>window.location.href += \"/documentation/udf\"</script>" > docs/index.html;
+echo "<script>window.location.href += \"/documentation/udf\"</script>" > docs/index.html
