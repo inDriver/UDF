@@ -20,6 +20,12 @@
 		7D93C26A291E7BE1008B1D6D /* SideEffectTypealiases.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D93C269291E7BE1008B1D6D /* SideEffectTypealiases.swift */; };
 		7D93C26C291E7C37008B1D6D /* SideEffectsBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D93C26B291E7C37008B1D6D /* SideEffectsBuilder.swift */; };
 		7D93C26E291E86A1008B1D6D /* FakeSideEffect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D93C26D291E86A1008B1D6D /* FakeSideEffect.swift */; };
+		7DE8FE8C298BB8FB009E212C /* Component+stateToProps.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DE8FE89298BB8FB009E212C /* Component+stateToProps.swift */; };
+		7DE8FE8D298BB8FB009E212C /* Component+Connector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DE8FE8A298BB8FB009E212C /* Component+Connector.swift */; };
+		7DE8FE8E298BB8FB009E212C /* Component+SelfConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DE8FE8B298BB8FB009E212C /* Component+SelfConnector.swift */; };
+		7DE8FE90298BBAFC009E212C /* Component+ConnectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DE8FE8F298BBAFC009E212C /* Component+ConnectorTests.swift */; };
+		7DE8FE92298BBCC2009E212C /* Component+SelfConnectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DE8FE91298BBCC2009E212C /* Component+SelfConnectorTests.swift */; };
+		7DE8FE94298BBCD2009E212C /* Component+stateToPropsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DE8FE93298BBCD2009E212C /* Component+stateToPropsTests.swift */; };
 		7DFFAB47290979D600804542 /* SideEffectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DFFAB46290979D600804542 /* SideEffectTests.swift */; };
 		9E45E1862694A640003B0321 /* Subscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E45E17C2694A640003B0321 /* Subscription.swift */; };
 		9E45E1882694A640003B0321 /* ActionDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E45E17E2694A640003B0321 /* ActionDispatcher.swift */; };
@@ -73,6 +79,12 @@
 		7D93C269291E7BE1008B1D6D /* SideEffectTypealiases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideEffectTypealiases.swift; sourceTree = "<group>"; };
 		7D93C26B291E7C37008B1D6D /* SideEffectsBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideEffectsBuilder.swift; sourceTree = "<group>"; };
 		7D93C26D291E86A1008B1D6D /* FakeSideEffect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeSideEffect.swift; sourceTree = "<group>"; };
+		7DE8FE89298BB8FB009E212C /* Component+stateToProps.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Component+stateToProps.swift"; sourceTree = "<group>"; };
+		7DE8FE8A298BB8FB009E212C /* Component+Connector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Component+Connector.swift"; sourceTree = "<group>"; };
+		7DE8FE8B298BB8FB009E212C /* Component+SelfConnector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Component+SelfConnector.swift"; sourceTree = "<group>"; };
+		7DE8FE8F298BBAFC009E212C /* Component+ConnectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Component+ConnectorTests.swift"; sourceTree = "<group>"; };
+		7DE8FE91298BBCC2009E212C /* Component+SelfConnectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Component+SelfConnectorTests.swift"; sourceTree = "<group>"; };
+		7DE8FE93298BBCD2009E212C /* Component+stateToPropsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Component+stateToPropsTests.swift"; sourceTree = "<group>"; };
 		7DFFAB46290979D600804542 /* SideEffectTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideEffectTests.swift; sourceTree = "<group>"; };
 		9E45E17C2694A640003B0321 /* Subscription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Subscription.swift; sourceTree = "<group>"; };
 		9E45E17E2694A640003B0321 /* ActionDispatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActionDispatcher.swift; sourceTree = "<group>"; };
@@ -169,6 +181,9 @@
 			isa = PBXGroup;
 			children = (
 				9E45E1B12694A701003B0321 /* Component.swift */,
+				7DE8FE8A298BB8FB009E212C /* Component+Connector.swift */,
+				7DE8FE8B298BB8FB009E212C /* Component+SelfConnector.swift */,
+				7DE8FE89298BB8FB009E212C /* Component+stateToProps.swift */,
 				9E45E1B22694A701003B0321 /* ViewComponent.swift */,
 				9E45E1B32694A701003B0321 /* ServiceComponent.swift */,
 				7D1847E62747DE500027823F /* Propsable.swift */,
@@ -236,6 +251,9 @@
 				9E45E1BE2694A713003B0321 /* TestDoubles */,
 				9E45E1952694A647003B0321 /* ActionListenerTests.swift */,
 				9E45E1942694A647003B0321 /* ComponentTests.swift */,
+				7DE8FE8F298BBAFC009E212C /* Component+ConnectorTests.swift */,
+				7DE8FE91298BBCC2009E212C /* Component+SelfConnectorTests.swift */,
+				7DE8FE93298BBCD2009E212C /* Component+stateToPropsTests.swift */,
 				9E45E1982694A647003B0321 /* StoreBasicTests.swift */,
 				9E45E1992694A647003B0321 /* StoreDoubleScopeTests.swift */,
 				9E45E1962694A647003B0321 /* StoreScopeTests.swift */,
@@ -357,6 +375,7 @@
 				7D93C26A291E7BE1008B1D6D /* SideEffectTypealiases.swift in Sources */,
 				9E45E18A2694A640003B0321 /* Store.swift in Sources */,
 				7D802102272682420088B46D /* ClosureConnector.swift in Sources */,
+				7DE8FE8E298BB8FB009E212C /* Component+SelfConnector.swift in Sources */,
 				7D93C268291E7BCC008B1D6D /* CombineSideEffect.swift in Sources */,
 				9E45E1B62694A701003B0321 /* ActionListener.swift in Sources */,
 				9E45E18D2694A640003B0321 /* Action.swift in Sources */,
@@ -367,6 +386,7 @@
 				9E45E18F2694A640003B0321 /* Disposer.swift in Sources */,
 				7D93C265291E7B27008B1D6D /* SideEffectProtocol.swift in Sources */,
 				9E45E1B82694A701003B0321 /* ViewComponent.swift in Sources */,
+				7DE8FE8C298BB8FB009E212C /* Component+stateToProps.swift in Sources */,
 				9E45E1B42694A701003B0321 /* Connector.swift in Sources */,
 				9E45E18C2694A640003B0321 /* Reducer.swift in Sources */,
 				7D8020FE2726700E0088B46D /* ServiceActionListener.swift in Sources */,
@@ -377,6 +397,7 @@
 				9E45E1B92694A701003B0321 /* ServiceComponent.swift in Sources */,
 				7D802100272670370088B46D /* ViewActionListener.swift in Sources */,
 				7D8020FA27266F6C0088B46D /* ActionListenerConnector.swift in Sources */,
+				7DE8FE8D298BB8FB009E212C /* Component+Connector.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -387,8 +408,10 @@
 				9E45E1C72694A713003B0321 /* FakeComponent.swift in Sources */,
 				9E45E1A02694A647003B0321 /* StoreDoubleScopeTests.swift in Sources */,
 				7D802104272682E70088B46D /* FakeActionListenerConnector.swift in Sources */,
+				7DE8FE94298BBCD2009E212C /* Component+stateToPropsTests.swift in Sources */,
 				9E45E19B2694A647003B0321 /* ComponentTests.swift in Sources */,
 				9E45E19D2694A647003B0321 /* StoreScopeTests.swift in Sources */,
+				7DE8FE90298BBAFC009E212C /* Component+ConnectorTests.swift in Sources */,
 				9E45E1C52694A713003B0321 /* FakeComponentConnector.swift in Sources */,
 				9E45E1C92694A713003B0321 /* FakeActionListener.swift in Sources */,
 				9E45E1C82694A713003B0321 /* FakeConnector.swift in Sources */,
@@ -397,6 +420,7 @@
 				9E45E1C62694A713003B0321 /* TestState.swift in Sources */,
 				9E45E19F2694A647003B0321 /* StoreBasicTests.swift in Sources */,
 				7D8021062726834A0088B46D /* FakeActionListenerAndConnector.swift in Sources */,
+				7DE8FE92298BBCC2009E212C /* Component+SelfConnectorTests.swift in Sources */,
 				9E45E1CA2694A713003B0321 /* FakeAction.swift in Sources */,
 				7DFFAB47290979D600804542 /* SideEffectTests.swift in Sources */,
 			);
