@@ -15,7 +15,7 @@
 
 import Foundation
 
-class ClosureConnector<State: Equatable, Props: Equatable>: Connector {
+class ClosureConnector<State, Props: Equatable>: Connector {
 
     let closure: (State, ActionDispatcher) -> Props
 
