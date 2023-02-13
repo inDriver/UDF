@@ -24,7 +24,7 @@ public extension Component {
         to store: Store<State>,
         by connector: ConnectorType
     ) where ConnectorType.State == State, ConnectorType.Props == Props {
-        connect(to: store, removeDuplicates: { _, _ in false }, by: connector) { $0 }
+        connect(to: store, by: connector) { $0 }
     }
 
     /// Connects a component to a store using a connector and a keypath.
@@ -38,7 +38,7 @@ public extension Component {
         by connector: ConnectorType,
         state keypath: KeyPath<State, ConnectorType.State>
     ) where ConnectorType.Props == Props {
-        connect(to: store, removeDuplicates: { _, _ in false }, by: connector) { $0[keyPath: keypath] }
+        connect(to: store, by: connector) { $0[keyPath: keypath] }
     }
 
     /// Connects a component to a store.
