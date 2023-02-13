@@ -1,12 +1,11 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Anton Goncharov on 01.02.2023.
 //
 
 public extension Component {
-
     /// Connects a component to a store when Component`'s `Props` is equal to `Store`'s `State`.
     ///
     /// - Parameters:
@@ -57,7 +56,6 @@ public extension Component {
 }
 
 public extension Component {
-
     /// Connects a component to a store using a connector with whole `Store`'s `State`.
     ///
     /// - Parameters:
@@ -66,7 +64,7 @@ public extension Component {
     ///   - by: A `Connector` that transforms State to Props.
     func connect<State, ConnectorType: Connector>(
         to store: Store<State>,
-        removeDuplicates: Bool = false,
+        removeDuplicates: Bool,
         by connector: ConnectorType
     ) where ConnectorType.State == State, ConnectorType.Props == Props, State: Equatable {
         connect(to: store, removeDuplicates: removeDuplicates, by: connector) { $0 }
@@ -81,7 +79,7 @@ public extension Component {
     ///   - keypath: A keypath for a `State` of the `Component`.
     func connect<State, ConnectorType: Connector>(
         to store: Store<State>,
-        removeDuplicates: Bool = false,
+        removeDuplicates: Bool,
         by connector: ConnectorType,
         state keypath: KeyPath<State, ConnectorType.State>
     ) where ConnectorType.Props == Props, ConnectorType.State: Equatable {
@@ -97,19 +95,20 @@ public extension Component {
     ///   - transform: A closure that transforms the `Store`'s `State` to a `State` of the `Component`.
     func connect<State, ConnectorType: Connector>(
         to store: Store<State>,
-        removeDuplicates: Bool = false,
+        removeDuplicates: Bool,
         by connector: ConnectorType,
         transform: @escaping (State) -> ConnectorType.State
     ) where ConnectorType.Props == Props, ConnectorType.State: Equatable {
-        connect(to: store,
-                removeDuplicates: removeDuplicates ? { $0 == $1 } : { _, _ in false },
-                by: connector,
-                transform: transform)
+        connect(
+            to: store,
+            removeDuplicates: removeDuplicates ? { $0 == $1 } : { _, _ in false },
+            by: connector,
+            transform: transform
+        )
     }
 }
 
 extension Component {
-
     func connect<State, ConnectorType: Connector>(
         to store: Store<State>,
         removeDuplicates: @escaping (ConnectorType.State, ConnectorType.State) -> Bool,
