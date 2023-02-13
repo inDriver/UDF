@@ -14,7 +14,7 @@ public extension Component where Self: Connector {
     func connect<State>(
         to store: Store<State>
     ) where Self.State == State {
-        connect(to: store, removeDuplicates: { _, _ in false }) { $0 }
+        connect(to: store) { $0 }
     }
 
     /// Connects a component to a store when the `Component` is a `Connector`and with a keypath.
@@ -25,7 +25,7 @@ public extension Component where Self: Connector {
     func connect<State>(
         to store: Store<State>,
         state keypath: KeyPath<State, Self.State>) {
-            connect(to: store, removeDuplicates: { _, _ in false }) { $0[keyPath: keypath] }
+            connect(to: store) { $0[keyPath: keypath] }
     }
 
     /// Connects a component to a store when the `Component` is a `Connector`.
