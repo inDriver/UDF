@@ -17,7 +17,19 @@ import Combine
 
 /// Parent protocol for components. Use ``ViewComponent`` or ``ServiceComponent`` for your component.
 public protocol Component: Propsable {
-
     var queue: DispatchQueue { get }
     var disposer: Disposer { get }
+
+    func connect<State, ConnectorType: Connector>(
+        to store: Store<State>,
+        by connector: ConnectorType,
+        transform: @escaping (State) -> ConnectorType.State
+    ) where ConnectorType.Props == Props
+
+    func connect<State, ConnectorType: Connector>(
+        to store: Store<State>,
+        removeDuplicates: Bool,
+        by connector: ConnectorType,
+        transform: @escaping (State) -> ConnectorType.State
+    ) where ConnectorType.Props == Props, ConnectorType.State: Equatable
 }
