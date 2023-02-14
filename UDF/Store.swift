@@ -92,6 +92,9 @@ public class Store<State>: ActionDispatcher {
     public func observe(on queue: DispatchQueue = .main, with observer: @escaping (State) -> Void) -> Disposable {
         let subscriber = publisher
             .receive(on: queue)
+        // Allows a store live until a subscription exists.
+        // See https://forums.swift.org/t/combine-best-practices-with-memory-management-using-subjects-to-publish-values/38724
+            .map { (self, $0).1 }
             .sink(receiveValue: observer)
         return subscriber
     }
@@ -111,6 +114,9 @@ public class Store<State>: ActionDispatcher {
         with observer: @escaping (State, Action) -> Void) -> Disposable {
             let subscriber = actionsSubject
                 .receive(on: queue)
+            // Allows a store live until a subscription exists.
+            // See https://forums.swift.org/t/combine-best-practices-with-memory-management-using-subjects-to-publish-values/38724
+                .map { (self, $0).1 }
                 .sink {value in
                     observer(value.0, value.1)
                 }

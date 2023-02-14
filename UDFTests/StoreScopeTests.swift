@@ -196,4 +196,49 @@ class StoreScopeTests: XCTestCase {
         waitForExpectations(timeout: 0.1, handler: nil)
         XCTAssertEqual(localStates, [1])
     }
+
+    func testScopeStoreLivesUntillObserveSubscribeExists() {
+        // given
+        let initState = TestState(localState: 1, otherLocalState: "test")
+        func reducer(state: inout TestState, with _: Action) {
+            state.localState = 42
+        }
+        store = Store(state: initState, reducer: reducer)
+        var localStates = [Int]()
+        let expectation = self.expectation(description: #function)
+
+        // when
+        store.scope(\.localState).observe {
+            localStates.append($0)
+            if localStates.count == 2 { expectation.fulfill() }
+        }.dispose(on: disposer)
+        store.dispatch(FakeAction())
+
+        // then
+        waitForExpectations(timeout: 0.1, handler: nil)
+        XCTAssertEqual(localStates, [1, 42])
+    }
+
+    func testScopeStoreLivesUntillOnActionSubscribeExists() {
+        // given
+        let initState = TestState(localState: 1, otherLocalState: "test")
+        func emptyReducer(state _: inout TestState, with _: Action) { }
+        store = Store(state: initState, reducer: emptyReducer)
+        var state: Int?
+        var action: Action?
+        let expectation = self.expectation(description: #function)
+
+        // when
+        store.scope(\.localState).onAction {
+            state = $0
+            action = $1
+            expectation.fulfill()
+        }.dispose(on: disposer)
+        store.dispatch(FakeAction())
+
+        // then
+        waitForExpectations(timeout: 0.1, handler: nil)
+        XCTAssertEqual(state, 1)
+        XCTAssertTrue(action is FakeAction)
+    }
 }
