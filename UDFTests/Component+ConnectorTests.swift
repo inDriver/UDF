@@ -179,4 +179,23 @@ class ComponentConnectorTests: XCTestCase {
         // then
         wait(for: [exp], timeout: 0.1)
     }
+
+    func testScopeStoreLivesUntillConnectExists() {
+        // Given
+        let store = Store(state: TestState(intValue: 1), reducer: reducer)
+        let exp = expectation(description: "all state updates received")
+        let component = FakeComponent(propsDidSet: { props in
+            guard props.count == 2 else { return }
+            exp.fulfill()
+        })
+        let connector = FakeConnector()
+        component.connect(to: store.scope(\.intValue), removeDuplicates: ==, by: connector) { $0 }
+
+        // When
+        store.dispatch(FakeComponentConnector.Actions.valueDidChange(10))
+
+        // Then
+        waitForExpectations(timeout: 0.1, handler: nil)
+        XCTAssertEqual(connector.statesHistory, [1, 10])
+    }
 }
