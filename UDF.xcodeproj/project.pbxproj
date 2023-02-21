@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		7D1847E72747DE510027823F /* Propsable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D1847E62747DE500027823F /* Propsable.swift */; };
+		7D7894AF29A506F000DD20CE /* ViewStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D7894AE29A506F000DD20CE /* ViewStore.swift */; };
 		7D8020FA27266F6C0088B46D /* ActionListenerConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8020F927266F6C0088B46D /* ActionListenerConnector.swift */; };
 		7D8020FC27266FDF0088B46D /* ClosureActionListenerConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8020FB27266FDF0088B46D /* ClosureActionListenerConnector.swift */; };
 		7D8020FE2726700E0088B46D /* ServiceActionListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8020FD2726700E0088B46D /* ServiceActionListener.swift */; };
@@ -66,6 +67,7 @@
 
 /* Begin PBXFileReference section */
 		7D1847E62747DE500027823F /* Propsable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Propsable.swift; sourceTree = "<group>"; };
+		7D7894AE29A506F000DD20CE /* ViewStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewStore.swift; sourceTree = "<group>"; };
 		7D8020F927266F6C0088B46D /* ActionListenerConnector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionListenerConnector.swift; sourceTree = "<group>"; };
 		7D8020FB27266FDF0088B46D /* ClosureActionListenerConnector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClosureActionListenerConnector.swift; sourceTree = "<group>"; };
 		7D8020FD2726700E0088B46D /* ServiceActionListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceActionListener.swift; sourceTree = "<group>"; };
@@ -235,6 +237,7 @@
 				9E45E1852694A640003B0321 /* Disposer.swift */,
 				9E45E1822694A640003B0321 /* Reducer.swift */,
 				9E45E1802694A640003B0321 /* Store.swift */,
+				7D7894AE29A506F000DD20CE /* ViewStore.swift */,
 				9E45E17C2694A640003B0321 /* Subscription.swift */,
 				9E45E1812694A640003B0321 /* Utils.swift */,
 				9EBAC3EA2694A5CC008EDFD5 /* UDF.h */,
@@ -380,6 +383,7 @@
 				9E45E1B72694A701003B0321 /* Component.swift in Sources */,
 				9E45E1862694A640003B0321 /* Subscription.swift in Sources */,
 				9E45E1B52694A701003B0321 /* Mapper.swift in Sources */,
+				7D7894AF29A506F000DD20CE /* ViewStore.swift in Sources */,
 				9E45E18F2694A640003B0321 /* Disposer.swift in Sources */,
 				7D93C265291E7B27008B1D6D /* SideEffectProtocol.swift in Sources */,
 				9E45E1B82694A701003B0321 /* ViewComponent.swift in Sources */,
