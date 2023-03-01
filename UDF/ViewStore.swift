@@ -43,7 +43,7 @@ import UIKit
         let view = CounterView(store: store.viewStore(\.counterState))
         return UIHostingController(rootView: view)
 */
-extension Store {
+public extension Store {
     func viewStore<ScopeState, ActionType: Action>(
         _ keypath: KeyPath<State, ScopeState>
     ) -> ViewStore<ScopeState, ActionType> {
@@ -51,24 +51,24 @@ extension Store {
     }
 }
 
-protocol Dispatcher<ActionType> {
+public protocol Dispatcher<ActionType> {
 
     associatedtype ActionType: Action
 
     func dispatch(_ action: ActionType)
 }
 
-class ViewStore<State, ActionType: Action>: ObservableObject, Dispatcher {
+public class ViewStore<State, ActionType: Action>: ObservableObject, Dispatcher {
 
     @Published
     var store: Store<State>
     var cancelables = Set<AnyCancellable>()
 
-    var state: State {
+    public var state: State {
         store.state
     }
 
-    init(store: Store<State>) {
+    public init(store: Store<State>) {
         self.store = store
 
         store.publisher.sink { [weak self] _ in
@@ -78,7 +78,7 @@ class ViewStore<State, ActionType: Action>: ObservableObject, Dispatcher {
         }.store(in: &cancelables)
     }
 
-    func dispatch(_ action: ActionType) {
+    public func dispatch(_ action: ActionType) {
         store.dispatch(action)
     }
 }
