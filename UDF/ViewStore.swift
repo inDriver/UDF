@@ -43,22 +43,7 @@ import UIKit
         let view = CounterView(store: store.viewStore(\.counterState))
         return UIHostingController(rootView: view)
 */
-public extension Store {
-    func viewStore<ScopeState, ActionType: Action>(
-        _ keypath: KeyPath<State, ScopeState>
-    ) -> ViewStore<ScopeState, ActionType> {
-        .init(store: scope(keypath))
-    }
-}
-
-public protocol Dispatcher<ActionType> {
-
-    associatedtype ActionType: Action
-
-    func dispatch(_ action: ActionType)
-}
-
-public class ViewStore<State, ActionType: Action>: ObservableObject, Dispatcher {
+@_spi(Private) public class ViewStore<State, ActionType: Action>: ObservableObject, Dispatcher {
 
     @Published
     var store: Store<State>
@@ -81,4 +66,19 @@ public class ViewStore<State, ActionType: Action>: ObservableObject, Dispatcher 
     public func dispatch(_ action: ActionType) {
         store.dispatch(action)
     }
+}
+
+@_spi(Private) public extension Store {
+    func viewStore<ScopeState, ActionType: Action>(
+        _ keypath: KeyPath<State, ScopeState>
+    ) -> ViewStore<ScopeState, ActionType> {
+        .init(store: scope(keypath))
+    }
+}
+
+@_spi(Private) public protocol Dispatcher<ActionType> {
+
+    associatedtype ActionType: Action
+
+    func dispatch(_ action: ActionType)
 }
