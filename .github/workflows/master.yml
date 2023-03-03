@@ -35,4 +35,4 @@ jobs:
         # For available image environment showcase
         run: xcodebuild -showsdks
       - name: Test
-        run: xcodebuild test -project UDF.xcodeproj -scheme UDF -destination 'platform=iOS Simulator,name=iPhone 11,OS=15.2'
+        run: xcodebuild test -project UDF.xcodeproj -scheme UDF -destination 'platform=iOS Simulator,name=iPhone 11,OS=16.2'
