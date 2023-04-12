@@ -15,13 +15,22 @@
 
 struct CombineSideEffect: SideEffectProtocol {
 
-    let effects: [SideEffect]
+    let effects: [SideEffectProtocol]
 
     init(effects: [SideEffect]) {
-        self.effects = effects.compactMap { $0 }
+        self.effects = effects.reduce(into:[]) { result, effect in
+            switch effect {
+            case let combineSideEffect as CombineSideEffect:
+                result.append(contentsOf: combineSideEffect.effects)
+            case nil:
+                return
+            case let .some(effect):
+                result.append(effect)
+            }
+        }
     }
 
     func execute(with dispatcher: ActionDispatcher) {
-        effects.forEach { $0?.execute(with: dispatcher) }
+        effects.forEach { $0.execute(with: dispatcher) }
     }
 }
