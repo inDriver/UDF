@@ -13,11 +13,11 @@
 //  limitations under the License.
 //
 
-struct CombineSideEffect: SideEffectProtocol {
+public struct CombineSideEffect: SideEffectProtocol {
 
     let effects: [SideEffectProtocol]
 
-    init(effects: [SideEffect]) {
+    public init(effects: [SideEffect]) {
         self.effects = effects.reduce(into:[]) { result, effect in
             switch effect {
             case let combineSideEffect as CombineSideEffect:
@@ -30,7 +30,7 @@ struct CombineSideEffect: SideEffectProtocol {
         }
     }
 
-    func execute(with dispatcher: ActionDispatcher) {
+    public func execute(with dispatcher: ActionDispatcher) {
         effects.forEach { $0.execute(with: dispatcher) }
     }
 }
