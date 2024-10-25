@@ -20,6 +20,7 @@ class ComponentSelfConnectorTests: XCTestCase {
         reducer(state: &state.intValue, action: action)
     }
 
+    @MainActor 
     func testConnect_store() {
         // given
         let store = Store(state: TestState(intValue: 1), reducer: reducer)
@@ -38,6 +39,7 @@ class ComponentSelfConnectorTests: XCTestCase {
         XCTAssertEqual(component.propsHistory, [1, 2])
     }
 
+    @MainActor
     func testConnect_store_keypath() {
         // given
         let store = Store(state: TestState(intValue: 1), reducer: reducer)
@@ -56,6 +58,7 @@ class ComponentSelfConnectorTests: XCTestCase {
         XCTAssertEqual(component.propsHistory, [1, 2])
     }
 
+    @MainActor
     func testConnect_store_transform() {
         // given
         let store = Store(state: 1, reducer: reducer)
@@ -74,6 +77,7 @@ class ComponentSelfConnectorTests: XCTestCase {
         XCTAssertEqual(component.propsHistory, [1, 2])
     }
 
+    @MainActor
     func testConnect_store_removeDuplicates() {
         // Given
         let store = Store(state: 1, reducer: reducer)
@@ -94,6 +98,7 @@ class ComponentSelfConnectorTests: XCTestCase {
         XCTAssertEqual(component.statesHistory, [1, 10, 20])
     }
 
+    @MainActor
     func testConnect_store_removeDuplicates_keypath() {
         // given
         let store = Store(state: TestState(intValue: 1), reducer: reducer)
@@ -114,6 +119,7 @@ class ComponentSelfConnectorTests: XCTestCase {
         XCTAssertEqual(component.statesHistory, [1, 10, 20])
     }
 
+    @MainActor
     func testConnect_store_removeDuplicates_transform() {
         // given
         let store = Store(state: 1, reducer: reducer)
@@ -134,6 +140,7 @@ class ComponentSelfConnectorTests: XCTestCase {
         XCTAssertEqual(component.statesHistory, [1, 10, 20])
     }
 
+    @MainActor
     func testWhenComponentIsConnector_DeinitCorrectly() {
         // given
         let store = Store(state: 1, reducer: reducer)
@@ -150,6 +157,7 @@ class ComponentSelfConnectorTests: XCTestCase {
         wait(for: [exp], timeout: 0.1)
     }
 
+    @MainActor
     func testEqualPropsDoesntNotifyComponent() {
         // Given
         let store = Store(state: 1, reducer: reducer)
@@ -170,6 +178,7 @@ class ComponentSelfConnectorTests: XCTestCase {
         XCTAssertEqual(component.propsHistory, [1, 10, 20])
     }
 
+    @MainActor
     func testScopeStoreLivesUntillConnectExists() {
         // Given
         let store = Store(state: TestState(intValue: 1), reducer: reducer)

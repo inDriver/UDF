@@ -16,6 +16,6 @@
 import Foundation
 
 /// Use this protocol to abstract ``Action`` dispatching.
-public protocol ActionDispatcher {
+public protocol ActionDispatcher: Sendable {
     func dispatch(_ action: Action)
 }

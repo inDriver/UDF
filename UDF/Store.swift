@@ -26,7 +26,7 @@ import Combine
 /// state = reducer(state, action)
 /// ```
 /// And then the Store will notify all the subscribers with the new State.
-public class Store<State>: ActionDispatcher {
+public class Store<State>: ActionDispatcher, @unchecked Sendable {
     public fileprivate(set) var publisher: CurrentValueSubject<State, Never>
     public fileprivate(set) var actionsSubject: PassthroughSubject<(State, Action), Never> = .init()
 

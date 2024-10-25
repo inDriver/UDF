@@ -17,6 +17,7 @@ import Foundation
 
 /// A protocol for view components. Executes on `.main` queue.
 /// Overriding of `queue` property is not welcome.
+@MainActor
 public protocol ViewComponent: Component {}
 
 public extension ViewComponent {

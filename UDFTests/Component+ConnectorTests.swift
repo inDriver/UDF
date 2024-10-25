@@ -20,6 +20,7 @@ class ComponentConnectorTests: XCTestCase {
         reducer(state: &state.intValue, action: action)
     }
 
+    @MainActor
     func testConnect_store() {
         // given
         let store = Store(state: 1, reducer: reducer)
@@ -38,6 +39,7 @@ class ComponentConnectorTests: XCTestCase {
         XCTAssertEqual(component.propsHistory, [1, 2])
     }
 
+    @MainActor
     func testConnect_store_connector() {
         // given
         let store = Store(state: TestState(intValue: 1), reducer: reducer)
@@ -57,6 +59,7 @@ class ComponentConnectorTests: XCTestCase {
         XCTAssertEqual(component.propsHistory, [1, 2])
     }
 
+    @MainActor
     func testConnect_store_connector_keypath() {
         // given
         let store = Store(state: TestState(intValue: 1), reducer: reducer)
@@ -76,6 +79,7 @@ class ComponentConnectorTests: XCTestCase {
         XCTAssertEqual(component.propsHistory, [1, 2])
     }
 
+    @MainActor
     func testConnect_store_connector_transform() {
         // given
         let store = Store(state: 1, reducer: reducer)
@@ -95,6 +99,7 @@ class ComponentConnectorTests: XCTestCase {
         XCTAssertEqual(component.propsHistory, [1, 2])
     }
 
+    @MainActor
     func testConnect_store_removeDuplicates_connector() {
         // Given
         let store = Store(state: 1, reducer: reducer)
@@ -116,6 +121,7 @@ class ComponentConnectorTests: XCTestCase {
         XCTAssertEqual(connector.statesHistory, [1, 10, 20])
     }
 
+    @MainActor
     func testConnect_store_removeDuplicates_connector_keypath() {
         // Given
         let store = Store(state: TestState(intValue: 1), reducer: reducer)
@@ -137,6 +143,7 @@ class ComponentConnectorTests: XCTestCase {
         XCTAssertEqual(connector.statesHistory, [1, 10, 20])
     }
 
+    @MainActor
     func testConnect_store_removeDuplicates_connector_transform() {
         // Given
         let store = Store(state: 1, reducer: reducer)
@@ -158,6 +165,7 @@ class ComponentConnectorTests: XCTestCase {
         XCTAssertEqual(connector.statesHistory, [1, 10, 20])
     }
 
+    @MainActor
     func testComponentAndConnector_DeinitCorrectly() {
         // given
         let store = Store(state: 1, reducer: reducer)
@@ -180,6 +188,7 @@ class ComponentConnectorTests: XCTestCase {
         wait(for: [exp], timeout: 0.1)
     }
 
+    @MainActor
     func testScopeStoreLivesUntillConnectExists() {
         // Given
         let store = Store(state: TestState(intValue: 1), reducer: reducer)

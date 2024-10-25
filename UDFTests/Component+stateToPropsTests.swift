@@ -31,6 +31,7 @@ class ComponentStateToPropsTests: XCTestCase {
         statesHistory = []
     }
 
+    @MainActor
     func testConnect_store_stateToProps() {
         // given
         let store = Store(state: 1, reducer: reducer)
@@ -49,6 +50,7 @@ class ComponentStateToPropsTests: XCTestCase {
         XCTAssertEqual(component.propsHistory, [1, 2])
     }
 
+    @MainActor
     func testConnect_store_stateToProps_keypath() {
         // given
         let store = Store(state: TestState(intValue: 1), reducer: reducer)
@@ -67,6 +69,7 @@ class ComponentStateToPropsTests: XCTestCase {
         XCTAssertEqual(component.propsHistory, [1, 2])
     }
 
+    @MainActor
     func testConnect_store_stateToProps_transform() {
         // given
         let store = Store(state: 1, reducer: reducer)
@@ -85,6 +88,7 @@ class ComponentStateToPropsTests: XCTestCase {
         XCTAssertEqual(component.propsHistory, [1, 2])
     }
 
+    @MainActor
     func testConnect_store_removeDuplicates_stateToProps() {
         // Given
         let store = Store(state: 1, reducer: reducer)
@@ -105,6 +109,7 @@ class ComponentStateToPropsTests: XCTestCase {
         XCTAssertEqual(statesHistory, [1, 10, 20])
     }
 
+    @MainActor
     func testConnect_store_removeDuplicates_stateToProps_keypath() {
         // Given
         let store = Store(state: TestState(intValue: 1), reducer: reducer)
@@ -125,6 +130,7 @@ class ComponentStateToPropsTests: XCTestCase {
         XCTAssertEqual(statesHistory, [1, 10, 20])
     }
 
+    @MainActor
     func testConnect_store_removeDuplicates_stateToProps_transform() {
         // Given
         let store = Store(state: 1, reducer: reducer)
