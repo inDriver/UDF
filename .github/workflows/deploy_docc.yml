@@ -20,18 +20,21 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: macos-12
+    runs-on: [ self-hosted, iOS_builder ]
     timeout-minutes: 90
     steps:
       - name: 📥 checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
       - name: 📋 Build DocC
         run: source Scripts/build_docc.sh
+
       - name: 📜 Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
           # Upload docs directory
           path: 'docs'
+
       - name: 🐙 Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
