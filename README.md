@@ -1,4 +1,6 @@
+[![Swift Version](https://img.shields.io/badge/Swift-5.7-F16D39.svg?style=flat)](https://developer.apple.com/swift)
 [![Swift Package Manager compatible](https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen.svg)](https://github.com/apple/swift-package-manager)
+
 # UDF
 <p align="center">
 <img src="./Docs/img/logo.svg" alt="UDF" height="340">
