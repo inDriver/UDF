@@ -20,7 +20,7 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: [ self-hosted, iOS_builder ]
+    runs-on: [ self-hosted, macos-latest ]
     timeout-minutes: 90
     steps:
       - name: 📥 checkout
