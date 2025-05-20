@@ -24,7 +24,7 @@ permissions:
 jobs:
   build:
     name: develop build
-    runs-on: [ self-hosted, macos-latest ]
+    runs-on: macos-12
     timeout-minutes: 90
     environment: production
     env:
