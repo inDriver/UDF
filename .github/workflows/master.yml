@@ -24,8 +24,9 @@ permissions:
 jobs:
   build:
     name: develop build
-    runs-on: [ self-hosted, iOS_builder ]
+    runs-on: [ self-hosted, macOS ]
     timeout-minutes: 90
+    environment: production
     env:
       LC_ALL: en_US.UTF-8
       LANG: en_US.UTF-8
