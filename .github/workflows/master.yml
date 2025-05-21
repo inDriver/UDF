@@ -1,4 +1,4 @@
-name: master
+name: 01_master
 
 on:
   # Trigger the workflow on push,
@@ -43,4 +43,11 @@ jobs:
         run: xcodebuild -showsdks
 
       - name: Test
-        run: xcodebuild test -project UDF.xcodeproj -scheme UDF -destination 'platform=iOS Simulator,name=iPhone 11,OS=16.2'
+        run: >
+          xcodebuild test
+          -project UDF.xcodeproj
+          -scheme UDF
+          -destination 'platform=iOS Simulator,name=iPhone 11,OS=16.2'
+          CODE_SIGN_IDENTITY=""
+          CODE_SIGN_ALLOWED=NO
+          CODE_SIGNING_ALLOWED=NO
