@@ -19,17 +19,11 @@ import XCTest
 class StoreDoubleScopeTests: XCTestCase {
     struct BigState: Equatable {
         var testState: TestState
-        var computedTestState: TestState {
-            testState
-        }
     }
 
     struct TestState: Equatable {
         var localState: Int
-        let otherLocalState: String
-        var computedState: Int {
-            localState
-        }
+        var otherLocalState: String
     }
 
     var store: Store<BigState>!
@@ -52,8 +46,8 @@ class StoreDoubleScopeTests: XCTestCase {
         var localState: Int?
         let expectation = self.expectation(description: #function)
         let localStore = store
-            .scope(\.computedTestState)
-            .scope(\.computedState)
+            .scope(\.testState)
+            .scope(\.localState)
 
         // when
         localStore.observe {
@@ -76,8 +70,8 @@ class StoreDoubleScopeTests: XCTestCase {
         var localStates = [Int]()
         let expectation = self.expectation(description: #function)
         let localStore = store
-            .scope(\.computedTestState)
-            .scope(\.computedState)
+            .scope(\.testState)
+            .scope(\.localState)
 
         // when
         localStore.observe {
@@ -100,8 +94,8 @@ class StoreDoubleScopeTests: XCTestCase {
         var action: Action?
         let expectation = self.expectation(description: #function)
         let localStore = store
-            .scope(\.computedTestState)
-            .scope(\.computedState)
+            .scope(\.testState)
+            .scope(\.localState)
 
         // when
         localStore.onAction {
@@ -127,8 +121,8 @@ class StoreDoubleScopeTests: XCTestCase {
         var globalStates = [BigState]()
         let expectation = self.expectation(description: #function)
         let localStore = store
-            .scope(\.computedTestState)
-            .scope(\.computedState)
+            .scope(\.testState)
+            .scope(\.localState)
 
         // when
         store.observe {
@@ -151,8 +145,8 @@ class StoreDoubleScopeTests: XCTestCase {
         var action: Action?
         let expectation = self.expectation(description: #function)
         let localStore = store
-            .scope(\.computedTestState)
-            .scope(\.computedState)
+            .scope(\.testState)
+            .scope(\.localState)
 
         // when
         store.onAction {

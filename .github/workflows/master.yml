@@ -1,10 +1,12 @@
-name: master
+name: 01_master
+
 on:
   # Trigger the workflow on push,
   push:
     branches:
       - 'develop'
       - 'master'
+      - 'feature/**'
   # Триггер – пул реквесты *В* бранчи
   # т.е. базовой веткой pr'а должна быть одна из перечисленных
   pull_request:
@@ -16,22 +18,36 @@ on:
   # Trigger manually
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   build:
     name: develop build
-    # Image description https://github.com/actions/runner-images/blob/main/images/macos/macos-11-Readme.md
-    runs-on: macos-11
+    runs-on: macos-latest
     timeout-minutes: 90
+    environment: production
     env:
       LC_ALL: en_US.UTF-8
       LANG: en_US.UTF-8
       LANGUAGE: en_US.UTF-8
     steps:
-      - uses: actions/checkout@v3
+      - name: checkout
+        uses: actions/checkout@v4
+
       - name: Build
         run: xcodebuild -project UDF.xcodeproj
+
       - name: Show SDK
         # For available image environment showcase
         run: xcodebuild -showsdks
+
       - name: Test
-        run: xcodebuild test -project UDF.xcodeproj -scheme UDF -destination 'platform=iOS Simulator,name=iPhone 11,OS=15.2'
+        run: >
+          xcodebuild test
+          -project UDF.xcodeproj
+          -scheme UDF
+          -destination 'platform=iOS Simulator,name=iPhone 11,OS=16.2'
+          CODE_SIGN_IDENTITY=""
+          CODE_SIGN_ALLOWED=NO
+          CODE_SIGNING_ALLOWED=NO

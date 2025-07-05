@@ -19,3 +19,10 @@
 ///   - State: Generic inout parameter of a state.
 ///   - Action: ``Action`` that occurred in some component. Cast to a specific ``Action`` type inside a ``Reducer``.
 public typealias Reducer<State> = (inout State, Action) -> Void
+
+/// `SideEffectReducer` is  a `Reducer` that returns a ``SideEffect``.
+/// - Parameters:
+///   - State: Generic inout parameter of a state.
+///   - Action: ``Action`` that occurred in some component. Cast to a specific ``Action`` type inside a ``Reducer``.
+/// - Returns: A ``SideEffect`` that will be executed after `Reducer` call. Return `nil` if ``SideEffect`` is not needed.
+public typealias SideEffectReducer<State> = (inout State, Action) -> SideEffect

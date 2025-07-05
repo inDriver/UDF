@@ -16,13 +16,19 @@
 import UDF
 
 class FakeConnector: Connector {
+
+    var statesHistory = [Int]()
+
     let onDeinit: () -> Void
 
     init(onDeinit: @escaping () -> Void = { }) {
         self.onDeinit = onDeinit
     }
 
-    func stateToProps(state: Int, dispatcher _: ActionDispatcher) -> Int { state }
+    func stateToProps(state: Int, dispatcher _: ActionDispatcher) -> Int {
+        statesHistory.append(state)
+        return state
+    }
 
     deinit {
         onDeinit()

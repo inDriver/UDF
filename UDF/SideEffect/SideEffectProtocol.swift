@@ -13,10 +13,13 @@
 //  limitations under the License.
 //
 
-@testable import UDF
+/// A protocol that defines a `SideEffect`. `SideEffect` can be returned from ``SideEffectReducer``
+/// and executed inside a ``Store``
+///
+///`SideEffect` is a good place to make network request, save or load date from local memory,
+/// open web url, ask for permission etc.
+public protocol SideEffectProtocol {
+    func execute(with: ActionDispatcher)
+}
 
-struct FakeAction: Action {}
-
-struct OtherFakeAction: Action {}
-
-struct YeatAnotherFakeAction: Action {}
+public typealias SideEffect = SideEffectProtocol?

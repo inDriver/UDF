@@ -1,0 +1,41 @@
+name: 00_deploy_docc
+
+on:
+  push:
+    branches: ["master"]
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: macos-latest
+    timeout-minutes: 90
+    steps:
+      - name: 📥 checkout
+        uses: actions/checkout@v4
+
+      - name: 📋 Build DocC
+        run: source Scripts/build_docc.sh
+
+      - name: 📜 Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Upload docs directory
+          path: 'docs'
+
+      - name: 🐙 Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

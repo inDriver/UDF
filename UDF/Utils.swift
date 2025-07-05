@@ -13,13 +13,18 @@
 //  limitations under the License.
 //
 
-import Foundation
-
-/// A protocol for service components. Executes on global queue with
-/// `.userInitiated` quality-of-service class.
-/// If you need to use custom queue then override `queue` property.
-public protocol ServiceComponent: Component {}
-
-public extension ServiceComponent {
-    var queue: DispatchQueue { .global(qos: .userInitiated) }
+// swiftlint:disable identifier_name
+/// Forward composition of functions.
+///
+/// - Parameters:
+///   - f: A function that takes a value in `A` and returns a value in `B`.
+///   - a: An argument in `A`.
+///   - g: A function that takes a value in `B` and returns a value in `C`.
+///   - b: An argument in `B`.
+/// - Returns: A new function that takes a value in `A` and returns a value in `C`.
+/// - Note: This function is commonly seen in operator form as `>>>`.
+func pipe<A, B, C>(_ f: @escaping (_ a: A) -> B, _ g: @escaping (_ b: B) -> C) -> (A) -> C {
+    return { (a: A) -> C in
+        g(f(a))
+    }
 }
