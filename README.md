@@ -172,7 +172,7 @@ You can add the UDF to an Xcode project by adding it as a package dependency.
 
 ## Inspiration & Acknowledgments
 
- The UDF idea is based on [Alexey Demedetskiy](https://github.com/AlexeyDemedetskiy) ideas and [MaximBazarov](https://github.com/MaximBazarov) implementation of Unidirection Data Flow Pattern. Originally the UDF was a fork of [Unicore](https://github.com/MaximBazarov/Unicore).
+ The UDF idea is based on Alexey Demedetskiy ideas and [MaximBazarov](https://github.com/MaximBazarov) implementation of Unidirection Data Flow Pattern. Originally the UDF was a fork of [Unicore](https://github.com/MaximBazarov/Unicore).
 
  [The Composable Architecture](https://github.com/pointfreeco/swift-composable-architecture) inspired our implementation of a scope function and modularisation.
 
